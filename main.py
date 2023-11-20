@@ -24,5 +24,25 @@ time.sleep(2)
 with open("index.html", "w", encoding="utf-8") as file:
     file.write(driver.page_source)
 
+with open("index.html", encoding="utf-8") as file:
+    src = file.read()
+
+soup = BeautifulSoup(src, "lxml")
+count = soup.find_all(class_="list-title js-var_iCount")
+
+for item in count:
+    count_text = item.text
+num = ["0","1","2","3","4","5","6","7","8","9"]
+num_page = ""
+for char in count_text:
+    if char in num:
+                num_page = num_page + char
+# print(int(num_page))
+page = int(int(num_page) / 20) + 1
+print(page)
+href_count = soup.find_all(class_="brazzers-gallery brazzers-daddy")
+for item_href in href_count:
+    href = "https://bamper.by" + item_href.get("href")
+    print(href)
 driver.close()
 driver.quit()
