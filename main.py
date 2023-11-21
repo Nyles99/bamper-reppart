@@ -64,12 +64,17 @@ for number, number_href in part_href_url.items():
         src = file.read()
 
     soup = BeautifulSoup(src, "lxml")
-    price_obj = soup.find_all("meta", itemprop="price")
-    print (price_obj)
+    """price_obj = soup.find_all("meta", itemprop="price")
+    # print (price_obj)
     for item_price in price_obj:
         price = item_price.get("content")
         price = price + " BYN"
-    print(price)
+    print(price)"""
+
+    marka_obj = soup.find_all("span", itemprop="name")
+    for item_marka in marka_obj:
+        marka = item_marka.text
+    print(marka)
 
 driver.close()
 driver.quit()
