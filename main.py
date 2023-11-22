@@ -90,7 +90,13 @@ for number, number_href in part_href_url.items():
     """info_obj = soup.find_all("span", class_="media-heading cut-h-375")
     for item_info in info_obj:
         info = item_info.text.replace("  ","").replace("\n","")"""
-
+    
+    benzik_obj = soup.find_all("div", style="font-size: 17px;")
+    # print(benzik_obj)
+    for item_benzik in benzik_obj:
+        benzik = None
+        benzik = item_benzik.text.replace("  ","").replace("\n","")
+    print(benzik)
     os.remove(f"{number}.html")
 os.remove("index.html")
 driver.close()
