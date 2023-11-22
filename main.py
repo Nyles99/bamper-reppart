@@ -69,12 +69,29 @@ for number, number_href in part_href_url.items():
     for item_price in price_obj:
         price = item_price.get("content")
         price = price + " BYN"
-    print(price)"""
+    #print(price)
 
     marka_obj = soup.find_all("span", itemprop="name")
     for item_marka in marka_obj:
-        marka = item_marka.text
-    print(marka)
+        all_title_name = str(item_marka)
+        string = all_title_name[all_title_name.find("<b>") + 1 : ]
+        number_b = string.find('</b>')
+        name_part = string[2:number_b]
+        model_and_year = string[number_b+8 :]
+        marka = model_and_year[: model_and_year.find(" ")]
+        model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
+        year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
+    print(marka, model, year, price, number_href)"""
 
+    """artical_obj = soup.find_all("span", class_="data-type f13")
+    for item_artical in artical_obj:
+        artical = item_artical.text"""
+    
+    """info_obj = soup.find_all("span", class_="media-heading cut-h-375")
+    for item_info in info_obj:
+        info = item_info.text.replace("  ","").replace("\n","")"""
+
+    os.remove(f"{number}.html")
+os.remove("index.html")
 driver.close()
 driver.quit()
