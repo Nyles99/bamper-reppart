@@ -138,8 +138,10 @@ for number, number_href in part_href_url.items():
     number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
     name_href = number_href_reverse[::-1]
     print(name_href)
-    #img = requests.get(image)
-    #img_option = open()
+    img = requests.get(image)
+    img_option = open(name_href + '.jpg', 'wb')
+    img_option.write(img.content)
+    img_option.close
     #print(image)
     
     benzik_obj = soup.find_all("div", style="font-size: 17px;")
