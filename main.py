@@ -31,6 +31,7 @@ with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
             "МАРКА",
             "МОДЕЛЬ",
             "ГОД",
+            "ССЫЛКА НА ЗАПЧАСТЬ"
             "ТОПЛИВО",
             "ОБЪЕМ",
             "ТИП ДВИГАТЕЛЯ",
@@ -111,22 +112,35 @@ for number, number_href in part_href_url.items():
         artical = item_artical.text
     order = "Нет информации"
     status = "Б/у"
+    info = None
     info_obj = soup.find_all("span", class_="media-heading cut-h-375")
     for item_info in info_obj:
         info = item_info.text.replace("  ","").replace("\n","")
         info_lower = info.lower()
         if "ПОД ЗАКАЗ" in info:
             order = "ПОД ЗАКАЗ"
-        print(info)
+        # print(info)
         if "новый" in info_lower:
             status = "Новая"
         elif "новая" in info_lower:
             status = "Новая"
         elif "новые" in info_lower:
             status = "Новые"
-    print(status)
+    #print(status)
     #print(order)        
     #print(info)
+    image = None
+    image_obj = str(soup.find("img", class_="fotorama__img"))
+    # print(image_obj)
+    image = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
+    number_href_reverse = number_href[::-1]
+    number_href_reverse_second = number_href_reverse[1:]
+    number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
+    name_href = number_href_reverse[::-1]
+    print(name_href)
+    #img = requests.get(image)
+    #img_option = open()
+    #print(image)
     
     benzik_obj = soup.find_all("div", style="font-size: 17px;")
     fuel = None
@@ -188,6 +202,7 @@ for number, number_href in part_href_url.items():
             marka,
             model,
             year,
+            number_href,
             fuel,
             volume,
             engine,
@@ -197,7 +212,8 @@ for number, number_href in part_href_url.items():
             info,
             order,
             price,
-            status
+            status,
+            image
         )
     )
     file.close()
