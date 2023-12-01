@@ -10,6 +10,8 @@ from bs4 import BeautifulSoup
 import os
 import shutil
 import csv
+from rembg import remove
+from PIL import Image
 
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
@@ -129,19 +131,41 @@ for number, number_href in part_href_url.items():
     #print(status)
     #print(order)        
     #print(info)
-    image = None
+    foto = None
     image_obj = str(soup.find("img", class_="fotorama__img"))
     # print(image_obj)
-    image = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
+    foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
     number_href_reverse = number_href[::-1]
     number_href_reverse_second = number_href_reverse[1:]
     number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
     name_href = number_href_reverse[::-1]
     print(name_href)
-    img = requests.get(image)
+    img = requests.get(foto)
     img_option = open(name_href + '.jpg', 'wb')
     img_option.write(img.content)
     img_option.close
+
+    input_path = "water.jpg"
+    output_path = "watermark.png"
+    input = Image.open(input_path)
+    output = remove(input)
+    output.save(output_path)
+
+
+
+    img = Image.open(f"{name_href}.jpg")
+    watermark = Image.open("watermark.png")
+    img.paste(watermark,( 250, 100), watermark)
+    img.save(f"{name_href}1.png", format="png")
+    """img = cv2.imread(f"{name_href}.jpg")
+
+    alpha = 2.0
+    beta = -160
+
+    new = alpha * img + beta
+    new = np.clip(new, 0, 255).astype(np.uint8)
+
+    cv2.imwrite(f"{name_href}.png", new)"""
     #print(image)
     
     benzik_obj = soup.find_all("div", style="font-size: 17px;")
@@ -215,7 +239,7 @@ for number, number_href in part_href_url.items():
             order,
             price,
             status,
-            image
+            foto
         )
     )
     file.close()
@@ -223,3 +247,4 @@ for number, number_href in part_href_url.items():
 os.remove("index.html")
 driver.close()
 driver.quit()
+

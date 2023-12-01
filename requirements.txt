@@ -1,3 +1,5 @@
+numpy==1.21.6
+opencv-python==4.8.1.78
 attrs==23.1.0
 beautifulsoup4==4.12.2
 certifi==2023.7.22
