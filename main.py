@@ -23,7 +23,7 @@ options = Options()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--ignore-certificate-errors')
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
+watermark = Image.open("moe.png")
 with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
     writer = csv.writer(file_data)
 
@@ -141,22 +141,23 @@ for number, number_href in part_href_url.items():
     name_href = number_href_reverse[::-1]
     print(name_href)
     img = requests.get(foto)
-    img_option = open(name_href + '.jpg', 'wb')
+    img_option = open(name_href + '.png', 'wb')
     img_option.write(img.content)
     img_option.close
 
-    input_path = "water.jpg"
+    """input_path = "moe.png"
     output_path = "watermark.png"
     input = Image.open(input_path)
     output = remove(input)
-    output.save(output_path)
+    output.save(output_path)"""
 
 
 
-    img = Image.open(f"{name_href}.jpg")
-    watermark = Image.open("watermark.png")
-    img.paste(watermark,( 250, 100), watermark)
-    img.save(f"{name_href}1.png", format="png")
+    img = Image.open(f"{name_href}.png")
+    
+    img.paste(watermark,(-230,-97), watermark)
+    img.paste(watermark,(-230,1), watermark)
+    img.save(f"{name_href}.png", format="png")
     """img = cv2.imread(f"{name_href}.jpg")
 
     alpha = 2.0
