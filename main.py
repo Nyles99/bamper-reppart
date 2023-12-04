@@ -72,180 +72,194 @@ for char in count_text:
 # print(int(num_page))
 page = int(int(num_page) / 20) + 1
 print(page)
-href_count = soup.find_all(class_="brazzers-gallery brazzers-daddy")
-n = 1
-for item_href in href_count:
-    href = "https://bamper.by" + item_href.get("href")
-    part_href_url[n] = href
-    n += 1
-# print(part_href_url)
-
-for number, number_href in part_href_url.items():
-    driver.get(url=number_href)
-    time.sleep(2)
-    with open(f"{number}.html", "w", encoding="utf-8") as file:
+os.remove("index.html")
+for i in range(1,page):  
+    url = "https://bamper.by/zchbu/god_2023-2023/store_Y/isused_Y/?ACTION=REWRITED3&FORM_DATA=god_2023-2023%2Fstore_Y%2Fisused_Y&PAGEN_1="+str(i)
+    print(url)
+    driver.get(url=url)
+    time.sleep(1)
+    print("страница номер ", i)
+    with open("index.html", "w", encoding="utf-8") as file:
         file.write(driver.page_source)
 
-    with open(f"{number}.html", encoding="utf-8") as file:
+    with open("index.html", encoding="utf-8") as file:
         src = file.read()
 
     soup = BeautifulSoup(src, "lxml")
-    price_obj = soup.find_all("meta", itemprop="price")
-    # print (price_obj)
-    for item_price in price_obj:
-        price = item_price.get("content")
-        price = price + " BYN"
-    #print(price)
+    href_count = soup.find_all(class_="brazzers-gallery brazzers-daddy")
+    n = 1
+    for item_href in href_count:
+        href = "https://bamper.by" + item_href.get("href")
+        part_href_url[n] = href
+        print(n, part_href_url[n])
+        n += 1
+    # print(part_href_url)
 
-    marka_obj = soup.find_all("span", itemprop="name")
-    for item_marka in marka_obj:
-        all_title_name = str(item_marka)
-        string = all_title_name[all_title_name.find("<b>") + 1 : ]
-        number_b = string.find('</b>')
-        name_part = string[2:number_b]
-        model_and_year = string[number_b+8 :]
-        marka = model_and_year[: model_and_year.find(" ")]
-        model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
-        year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
-    #print(marka, model, year, price, number_href)
+    for number, number_href in part_href_url.items():
+        driver.get(url=number_href)
+        with open(f"{number}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
 
-    artical_obj = soup.find_all("span", class_="data-type f13")
-    for item_artical in artical_obj:
-        artical = item_artical.text
-    order = "Нет информации"
-    status = "Б/у"
-    info = None
-    info_obj = soup.find_all("span", class_="media-heading cut-h-375")
-    for item_info in info_obj:
-        info = item_info.text.replace("  ","").replace("\n","")
-        info_lower = info.lower()
-        if "ПОД ЗАКАЗ" in info:
-            order = "ПОД ЗАКАЗ"
-        # print(info)
-        if "новый" in info_lower:
-            status = "Новая"
-        elif "новая" in info_lower:
-            status = "Новая"
-        elif "новые" in info_lower:
-            status = "Новые"
-    #print(status)
-    #print(order)        
-    #print(info)
-    foto = None
-    image_obj = str(soup.find("img", class_="fotorama__img"))
-    # print(image_obj)
-    foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
-    number_href_reverse = number_href[::-1]
-    number_href_reverse_second = number_href_reverse[1:]
-    number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
-    name_href = number_href_reverse[::-1]
-    print(name_href)
-    img = requests.get(foto)
-    img_option = open(name_href + '.png', 'wb')
-    img_option.write(img.content)
-    img_option.close
+        with open(f"{number}.html", encoding="utf-8") as file:
+            src = file.read()
 
-    """input_path = "moe.png"
-    output_path = "watermark.png"
-    input = Image.open(input_path)
-    output = remove(input)
-    output.save(output_path)"""
+        soup = BeautifulSoup(src, "lxml")
+        price_obj = soup.find_all("meta", itemprop="price")
+        # print (price_obj)
+        for item_price in price_obj:
+            price = item_price.get("content")
+            price = price + " BYN"
+        #print(price)
+
+        marka_obj = soup.find_all("span", itemprop="name")
+        for item_marka in marka_obj:
+            all_title_name = str(item_marka)
+            string = all_title_name[all_title_name.find("<b>") + 1 : ]
+            number_b = string.find('</b>')
+            name_part = string[2:number_b]
+            model_and_year = string[number_b+8 :]
+            marka = model_and_year[: model_and_year.find(" ")]
+            model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
+            year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
+        #print(marka, model, year, price, number_href)
+
+        artical_obj = soup.find_all("span", class_="data-type f13")
+        for item_artical in artical_obj:
+            artical = item_artical.text
+        order = "Нет информации"
+        status = "Б/у"
+        info = None
+        info_obj = soup.find_all("span", class_="media-heading cut-h-375")
+        for item_info in info_obj:
+            info = item_info.text.replace("  ","").replace("\n","")
+            info_lower = info.lower()
+            if "ПОД ЗАКАЗ" in info:
+                order = "ПОД ЗАКАЗ"
+            # print(info)
+            if "новый" in info_lower:
+                status = "Новая"
+            elif "новая" in info_lower:
+                status = "Новая"
+            elif "новые" in info_lower:
+                status = "Новые"
+        #print(status)
+        #print(order)        
+        #print(info)
+        foto = None
+        image_obj = str(soup.find("img", class_="fotorama__img"))
+        # print(image_obj)
+        foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
+        number_href_reverse = number_href[::-1]
+        number_href_reverse_second = number_href_reverse[1:]
+        number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
+        name_href = number_href_reverse[::-1]
+        print(name_href)
+        img = requests.get(foto)
+        img_option = open(name_href + '.png', 'wb')
+        img_option.write(img.content)
+        img_option.close
+
+        """input_path = "moe.png"
+        output_path = "watermark.png"
+        input = Image.open(input_path)
+        output = remove(input)
+        output.save(output_path)"""
 
 
 
-    img = Image.open(f"{name_href}.png")
-    
-    img.paste(watermark,(-230,-97), watermark)
-    img.paste(watermark,(-230,1), watermark)
-    img.save(f"{name_href}.png", format="png")
-    """img = cv2.imread(f"{name_href}.jpg")
+        img = Image.open(f"{name_href}.png")
+        
+        img.paste(watermark,(-230,-97), watermark)
+        img.paste(watermark,(-230,1), watermark)
+        img.save(f"{name_href}.png", format="png")
+        """img = cv2.imread(f"{name_href}.jpg")
 
-    alpha = 2.0
-    beta = -160
+        alpha = 2.0
+        beta = -160
 
-    new = alpha * img + beta
-    new = np.clip(new, 0, 255).astype(np.uint8)
+        new = alpha * img + beta
+        new = np.clip(new, 0, 255).astype(np.uint8)
 
-    cv2.imwrite(f"{name_href}.png", new)"""
-    #print(image)
-    
-    benzik_obj = soup.find_all("div", style="font-size: 17px;")
-    fuel = None
-    transmission = "Нет информации"
-    engine = "Нет информации"
-    volume = None
-    car_body = None
-    # print(benzik_obj)
-    for item_benzik in benzik_obj:
-        benzik = None
-        benzik = item_benzik.text.replace("  ","").replace("\n","")
-        if "л," in benzik:
-            volume = benzik[benzik.find("л,") - 5 : benzik.find("л,") + 1]
-        if "бензин" in benzik:
-            fuel = "бензин"
-        elif "дизель" in benzik:
-            fuel = "дизель"
-        elif "электро" in benzik:
-            fuel = "электро"
-        elif "гибрид" in benzik:
-            fuel = "гибрид"
-        if "TSI" in benzik:
-            engine = "TSI"
-        elif "TDI" in benzik:
-            engine = "TDI"
-        elif "MPI" in benzik:
-            engine = "MPI"
-        elif "CRDI" in benzik:
-            engine = "CRDI"
-        if "АКПП" in benzik:
-            transmission = "АКПП"
-        elif "МКПП" in benzik:
-            transmission = "МКПП"
-        elif "вариатор" in benzik:
-            transmission = "вариатор"
-        if "седан" in benzik:
-            car_body = "седан"
-        elif "хетчбек" in benzik:
-            car_body = "хетчбек"
-        elif "внедорожник" in benzik:
-            car_body = "внедорожник"
-        elif "универсал" in benzik:
-            car_body = "универсал"
-        elif "кабриолет" in benzik:
-            car_body = "кабриолет"
-        elif "микроавтобус" in benzik:
-            car_body = "микроавтобус"
-        elif "пикап" in benzik:
-            car_body = "пикап" 
-    #print(volume, fuel, transmission, engine, car_body)
-    #print(benzik)"""
+        cv2.imwrite(f"{name_href}.png", new)"""
+        #print(image)
+        
+        benzik_obj = soup.find_all("div", style="font-size: 17px;")
+        fuel = None
+        transmission = "Нет информации"
+        engine = "Нет информации"
+        volume = None
+        car_body = None
+        # print(benzik_obj)
+        for item_benzik in benzik_obj:
+            benzik = None
+            benzik = item_benzik.text.replace("  ","").replace("\n","")
+            if "л," in benzik:
+                volume = benzik[benzik.find("л,") - 5 : benzik.find("л,") + 1]
+            if "бензин" in benzik:
+                fuel = "бензин"
+            elif "дизель" in benzik:
+                fuel = "дизель"
+            elif "электро" in benzik:
+                fuel = "электро"
+            elif "гибрид" in benzik:
+                fuel = "гибрид"
+            if "TSI" in benzik:
+                engine = "TSI"
+            elif "TDI" in benzik:
+                engine = "TDI"
+            elif "MPI" in benzik:
+                engine = "MPI"
+            elif "CRDI" in benzik:
+                engine = "CRDI"
+            if "АКПП" in benzik:
+                transmission = "АКПП"
+            elif "МКПП" in benzik:
+                transmission = "МКПП"
+            elif "вариатор" in benzik:
+                transmission = "вариатор"
+            if "седан" in benzik:
+                car_body = "седан"
+            elif "хетчбек" in benzik:
+                car_body = "хетчбек"
+            elif "внедорожник" in benzik:
+                car_body = "внедорожник"
+            elif "универсал" in benzik:
+                car_body = "универсал"
+            elif "кабриолет" in benzik:
+                car_body = "кабриолет"
+            elif "микроавтобус" in benzik:
+                car_body = "микроавтобус"
+            elif "пикап" in benzik:
+                car_body = "пикап" 
+        #print(volume, fuel, transmission, engine, car_body)
+        #print(benzik)"""
 
-    file = open(f"data_bamper.csv", "a", encoding="utf-8", newline='')
-    writer = csv.writer(file)
+        file = open(f"data_bamper.csv", "a", encoding="utf-8", newline='')
+        writer = csv.writer(file)
 
-    writer.writerow(
-        (
-            artical,
-            marka,
-            model,
-            year,
-            number_href,
-            fuel,
-            volume,
-            engine,
-            transmission,
-            car_body,
-            name_part,
-            info,
-            order,
-            price,
-            status,
-            foto
+        writer.writerow(
+            (
+                artical,
+                marka,
+                model,
+                year,
+                number_href,
+                fuel,
+                volume,
+                engine,
+                transmission,
+                car_body,
+                name_part,
+                info,
+                order,
+                price,
+                status,
+                foto
+            )
         )
-    )
-    file.close()
-    os.remove(f"{number}.html")
-os.remove("index.html")
+        file.close()
+        os.remove(f"{number}.html")
+    os.remove("index.html")
 driver.close()
 driver.quit()
 
