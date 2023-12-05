@@ -13,12 +13,13 @@ import csv
 from rembg import remove
 from PIL import Image
 
+input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
 }
 
-url = "https://bamper.by/zchbu/god_2023-2023/store_Y/isused_Y/"
+url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/isused_Y/"
 options = Options()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 options.add_argument('--ignore-certificate-errors')
@@ -74,7 +75,7 @@ page = int(int(num_page) / 20) + 1
 print(page)
 os.remove("index.html")
 for i in range(1,page):  
-    url = "https://bamper.by/zchbu/god_2023-2023/store_Y/isused_Y/?ACTION=REWRITED3&FORM_DATA=god_2023-2023%2Fstore_Y%2Fisused_Y&PAGEN_1="+str(i)
+    url = f"https://bamper.by/zchbu/god_2023-2023/store_Y/isused_Y/?ACTION=REWRITED3&FORM_DATA=god_{input_year}-{input_year}%2Fstore_Y%2Fisused_Y&PAGEN_1="+str(i)
     print(url)
     driver.get(url=url)
     time.sleep(1)
@@ -155,7 +156,7 @@ for i in range(1,page):
         name_href = number_href_reverse[::-1]
         print(name_href)
         img = requests.get(foto)
-        img_option = open(name_href + '.png', 'wb')
+        img_option = open(f"fotku/{name_href}.png", 'wb')
         img_option.write(img.content)
         img_option.close
 
@@ -167,11 +168,11 @@ for i in range(1,page):
 
 
 
-        img = Image.open(f"{name_href}.png")
+        img = Image.open(f"fotku/{name_href}.png")
         
         img.paste(watermark,(-230,-97), watermark)
         img.paste(watermark,(-230,1), watermark)
-        img.save(f"{name_href}.png", format="png")
+        img.save(f"fotku/{name_href}.png", format="png")
         """img = cv2.imread(f"{name_href}.jpg")
 
         alpha = 2.0
