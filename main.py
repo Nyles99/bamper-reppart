@@ -10,7 +10,6 @@ from bs4 import BeautifulSoup
 import os
 import shutil
 import csv
-from rembg import remove
 from PIL import Image
 
 input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
@@ -18,7 +17,10 @@ headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
 }
-
+if os.path.exists("fotku"):
+    print("Папка уже есть")
+else:
+    os.mkdir("fotku")
 url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/isused_Y/"
 options = Options()
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
