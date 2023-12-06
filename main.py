@@ -17,6 +17,22 @@ headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36"
 }
+
+# Адрес сайта, с которого мы будем получать данные
+url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
+    
+# Получаем содержимое страницы
+response = requests.get(url_byn)
+    
+# Создаем объект BeautifulSoup для парсинга HTML-разметки
+soup = BeautifulSoup(response.content, "html.parser")
+    
+# Получаем элемент с курсом валюты
+result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
+    
+# Возвращаем курс валюты как число
+usd_byn =  float(result.replace(",", ".")[:4])
+print(usd_byn)
 if os.path.exists("fotku"):
     print("Папка уже есть")
 else:
@@ -36,7 +52,7 @@ with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
             "МАРКА",
             "МОДЕЛЬ",
             "ГОД",
-            "ССЫЛКА НА ЗАПЧАСТЬ"
+            "ССЫЛКА НА ЗАПЧАСТЬ",
             "ТОПЛИВО",
             "ОБЪЕМ",
             "ТИП ДВИГАТЕЛЯ",
@@ -110,9 +126,9 @@ for i in range(1,page):
         price_obj = soup.find_all("meta", itemprop="price")
         # print (price_obj)
         for item_price in price_obj:
-            price = item_price.get("content")
-            price = price + " BYN"
-        #print(price)
+            price = item_price.get("content").replace(" ","")
+            price = round(float(price)/usd_byn) 
+        print(price)
 
         marka_obj = soup.find_all("span", itemprop="name")
         for item_marka in marka_obj:
@@ -156,17 +172,11 @@ for i in range(1,page):
         number_href_reverse_second = number_href_reverse[1:]
         number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
         name_href = number_href_reverse[::-1]
-        print(name_href)
+        # print(name_href)
         img = requests.get(foto)
         img_option = open(f"fotku/{name_href}.png", 'wb')
         img_option.write(img.content)
         img_option.close
-
-        """input_path = "moe.png"
-        output_path = "watermark.png"
-        input = Image.open(input_path)
-        output = remove(input)
-        output.save(output_path)"""
 
 
 
@@ -175,21 +185,11 @@ for i in range(1,page):
         img.paste(watermark,(-230,-97), watermark)
         img.paste(watermark,(-230,1), watermark)
         img.save(f"fotku/{name_href}.png", format="png")
-        """img = cv2.imread(f"{name_href}.jpg")
-
-        alpha = 2.0
-        beta = -160
-
-        new = alpha * img + beta
-        new = np.clip(new, 0, 255).astype(np.uint8)
-
-        cv2.imwrite(f"{name_href}.png", new)"""
-        #print(image)
         
         benzik_obj = soup.find_all("div", style="font-size: 17px;")
         fuel = None
-        transmission = "Нет информации"
-        engine = "Нет информации"
+        transmission = " "
+        engine = " "
         volume = None
         car_body = None
         # print(benzik_obj)
