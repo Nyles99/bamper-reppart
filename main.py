@@ -32,7 +32,11 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
     
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
-print("На сегодня 1USD = "+ str(usd_byn) + "BYN2023")
+print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
+
+file1 = open("black-list.txt", "r")
+#print(file1.read())
+
 if os.path.exists("fotku"):
     print("Папка уже есть")
 else:
@@ -115,6 +119,16 @@ for i in range(1,page):
     # print(part_href_url)
 
     for number, number_href in part_href_url.items():
+        # Находим номер поставщика
+        number_href_reverse = number_href[::-1]
+        number_href_reverse_second = number_href_reverse[1:]
+        number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
+        name_href = number_href_reverse[::-1]
+        #print(name_href)
+        num_provider = name_href[: name_href.find("-")]
+        #print(num_provider)
+        if num_provider not in file1.read():
+
         driver.get(url=number_href)
         with open(f"{number}.html", "w", encoding="utf-8") as file:
             file.write(driver.page_source)
@@ -128,7 +142,7 @@ for i in range(1,page):
         for item_price in price_obj:
             price = item_price.get("content").replace(" ","")
             price = round(float(price)/usd_byn) 
-        print(price)
+        #print(price)
 
         marka_obj = soup.find_all("span", itemprop="name")
         for item_marka in marka_obj:
@@ -168,10 +182,10 @@ for i in range(1,page):
         image_obj = str(soup.find("img", class_="fotorama__img"))
         # print(image_obj)
         foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
-        number_href_reverse = number_href[::-1]
+        """number_href_reverse = number_href[::-1]
         number_href_reverse_second = number_href_reverse[1:]
         number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
-        name_href = number_href_reverse[::-1]
+        name_href = number_href_reverse[::-1]"""
         # print(name_href)
         img = requests.get(foto)
         img_option = open(f"fotku/{name_href}.png", 'wb')
