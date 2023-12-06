@@ -32,7 +32,7 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
     
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
-print(usd_byn)
+print("На сегодня 1USD = "+ str(usd_byn) + "BYN2023")
 if os.path.exists("fotku"):
     print("Папка уже есть")
 else:
