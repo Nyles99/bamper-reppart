@@ -34,8 +34,21 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-
+black_list = []
 file1 = open("black-list.txt", "r")
+while True:
+    # считываем строку
+    line = file1.readline()
+    line = line.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line:
+        break
+    # выводим строку
+    black_list.append(line)
+#print(black_list)
+
+# закрываем файл
+file1.close
 #print(file1.read())
 
 if os.path.exists("fotku"):
@@ -143,7 +156,7 @@ for i in range(int(input_page),page):
         #print(name_href)
         num_provider = name_href[: name_href.find("-")]
         #print(num_provider)
-        if num_provider not in file1.read():
+        if num_provider not in black_list:
 
             driver.get(url=number_href)
             with open(f"{number}.html", "w", encoding="utf-8") as file:
@@ -153,6 +166,13 @@ for i in range(int(input_page),page):
                 src = file.read()
 
             soup = BeautifulSoup(src, "lxml")
+
+            price_obj = soup.find_all("meta", itemprop="price")
+            # print (price_obj)
+            for item_price in price_obj:
+                price = item_price.get("content").replace(" ","")
+                price = round(float(price)/usd_byn) 
+            #print(price)
 
             
             artical_obj = soup.find_all("span", class_="data-type f13")
@@ -296,6 +316,8 @@ for i in range(int(input_page),page):
             )
             file.close()
             os.remove(f"{number}.html")
+        else:
+            print(f'{num_provider} из black-list {name_href}')
     os.remove("index.html")
 driver.close()
 driver.quit()
