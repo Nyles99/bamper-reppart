@@ -12,6 +12,36 @@ import shutil
 import csv
 from PIL import Image
 
+
+def obrezka(url_foto, name_foto):
+    im = requests.get(url_foto)
+
+    with open(name_foto, "wb+") as file:
+        file.write(im.content)  # Для сохранения на компьютер
+
+    im = Image.open(name_foto)
+    pixels = im.load()  # список с пикселями
+    x, y = im.size  # ширина (x) и высота (y) изображения
+    min_line_white = []
+    n=0
+    for j in range(y):
+        white_pix = 0
+        
+        for i in range(x):
+            # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
+            if pixels[i, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
+                white_pix += 1
+        if white_pix == x:
+            n += 1
+        #print(white_pix, x, n)
+
+        #print(white_pix)
+        min_line_white.append(white_pix)
+    left_border = int(min(min_line_white)/2)
+    #print(left_border)
+    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(name_foto, quality=95)
+
+
 input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
 input_page = input("С какой страницы парсим (пиши 1, если это было не остановка) - ")
 headers = {
@@ -213,25 +243,25 @@ for i in range(int(input_page),page):
                 #print(order)        
                 #print(info)
                 foto = None
-                try:
-                    image_obj = str(soup.find("img", class_="fotorama__img"))
-                    # print(image_obj)
-                    foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
-                    """number_href_reverse = number_href[::-1]
-                    number_href_reverse_second = number_href_reverse[1:]
-                    number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
-                    name_href = number_href_reverse[::-1]"""
-                    # print(name_href)
+                
+                image_obj = str(soup.find("img", class_="fotorama__img"))
+                # print(image_obj)
+                foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
+                print(foto)
+                if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
                     img = requests.get(foto)
                     img_option = open(f"fotku/{name_href}.png", 'wb')
                     img_option.write(img.content)
-                    img_option.close
+                    #img_option.close
 
+                    im = requests.get(foto)
 
+                    with open(f"fotku/{name_href}.png", "wb+") as file:
+                        file.write(im.content)  # Для сохранения на компьютер
 
-                    img = Image.open(f"fotku/{name_href}.png")
-                    pixels = img.load()  # список с пикселями
-                    x, y = img.size  # ширина (x) и высота (y) изображения
+                    im = Image.open(f"fotku/{name_href}.png")
+                    pixels = im.load()  # список с пикселями
+                    x, y = im.size  # ширина (x) и высота (y) изображения
                     min_line_white = []
                     n=0
                     for j in range(y):
@@ -249,16 +279,23 @@ for i in range(int(input_page),page):
                         min_line_white.append(white_pix)
                     left_border = int(min(min_line_white)/2)
                     #print(left_border)
-                    img.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save('img.png', quality=95)
-                            
-                        
-                    img.paste(watermark,(-230,-97), watermark)
+                    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"fotku/{name_href}.png", quality=95)
+
+
+
+
+
+                    img = Image.open(f"fotku/{name_href}.png")
+
+                    #img = Image.open(f"fotku/{name_href}.png")    
+                    img.paste(watermark,(-275,-97), watermark)
                     img.paste(watermark,(-230,1), watermark)
                     img.save(f"fotku/{name_href}.png", format="png")
-                    os.remove("img.png")
-                except ZeroDivisionError:
-                    print(f"{name_href} - неверный формат или ерунда")
-                    
+                    img_option.close
+                    #os.remove("img.png")
+                    #print(f"{name_href} - неверный формат или ерунда")
+                else:
+                    foto = "Нет фотографии"    
                 benzik_obj = soup.find_all("div", style="font-size: 17px;")
                 fuel = None
                 transmission = " "
