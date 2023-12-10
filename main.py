@@ -239,9 +239,9 @@ for i in range(int(input_page),page):
                     for j in range(y):
                         white_pix = 0
             
-                        for i in range(x):
+                        for m in range(x):
                             # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
-                            if pixels[i, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
+                            if pixels[m, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
                                 white_pix += 1
                         if white_pix == x:
                             n += 1
