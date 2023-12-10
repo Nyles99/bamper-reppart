@@ -13,35 +13,6 @@ import csv
 from PIL import Image
 
 
-def obrezka(url_foto, name_foto):
-    im = requests.get(url_foto)
-
-    with open(name_foto, "wb+") as file:
-        file.write(im.content)  # Для сохранения на компьютер
-
-    im = Image.open(name_foto)
-    pixels = im.load()  # список с пикселями
-    x, y = im.size  # ширина (x) и высота (y) изображения
-    min_line_white = []
-    n=0
-    for j in range(y):
-        white_pix = 0
-        
-        for i in range(x):
-            # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
-            if pixels[i, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
-                white_pix += 1
-        if white_pix == x:
-            n += 1
-        #print(white_pix, x, n)
-
-        #print(white_pix)
-        min_line_white.append(white_pix)
-    left_border = int(min(min_line_white)/2)
-    #print(left_border)
-    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(name_foto, quality=95)
-
-
 input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
 input_page = input("С какой страницы парсим (пиши 1, если это было не остановка) - ")
 headers = {
@@ -56,7 +27,7 @@ url_byn = "https://www.google.com/search?q=курс+доллара+к+белор
 response = requests.get(url_byn)
     
 # Создаем объект BeautifulSoup для парсинга HTML-разметки
-soup = BeautifulSoup(response.content, "html.parser")
+soup = BeautifulSoup(response.content, 'html.parser')
     
 # Получаем элемент с курсом валюты
 result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
@@ -85,7 +56,7 @@ if os.path.exists("fotku"):
     print("Папка уже есть")
 else:
     os.mkdir("fotku")
-url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/isused_Y/"
+url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/"
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
@@ -139,7 +110,7 @@ with open("index.html", "w", encoding="utf-8") as file:
 with open("index.html", encoding="utf-8") as file:
     src = file.read()
 
-soup = BeautifulSoup(src, "lxml")
+soup = BeautifulSoup(src, 'html.parser')
 count = soup.find_all(class_="list-title js-var_iCount")
 
 part_href_url = {}
@@ -156,7 +127,7 @@ page = int(int(num_page) / 20) + 1
 print(page)
 os.remove("index.html")
 for i in range(int(input_page),page):  
-    url = f"https://bamper.by/zchbu/god_2023-2023/store_Y/isused_Y/?ACTION=REWRITED3&FORM_DATA=god_{input_year}-{input_year}%2Fstore_Y%2Fisused_Y&PAGEN_1="+str(i)
+    url = f"https://bamper.by/zchbu/god_2023-2023/store_Y/?ACTION=REWRITED3&FORM_DATA=god_{input_year}-{input_year}%2Fstore_Y&PAGEN_1="+str(i)
     print(url)
     driver.get(url=url)
     time.sleep(1)
@@ -167,7 +138,7 @@ for i in range(int(input_page),page):
     with open("index.html", encoding="utf-8") as file:
         src = file.read()
 
-    soup = BeautifulSoup(src, "lxml")
+    soup = BeautifulSoup(src, 'html.parser')
     href_count = soup.find_all(class_="brazzers-gallery brazzers-daddy")
     n = 1
     for item_href in href_count:
@@ -195,7 +166,7 @@ for i in range(int(input_page),page):
             with open(f"{number}.html", encoding="utf-8") as file:
                 src = file.read()
 
-            soup = BeautifulSoup(src, "lxml")
+            soup = BeautifulSoup(src, 'html.parser' )
 
             price_obj = soup.find_all("meta", itemprop="price")
             # print (price_obj)
