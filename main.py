@@ -11,6 +11,7 @@ import os
 import shutil
 import csv
 from PIL import Image
+import time
 
 
 input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
@@ -51,11 +52,11 @@ while True:
 # закрываем файл
 file1.close
 #print(file1.read())
-
-if os.path.exists("fotku"):
+folder_name = input_year + "fotku_" + time.strftime('%Y-%m-%d')
+if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
-    os.mkdir("fotku")
+    os.mkdir(folder_name)
 url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/"
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -194,7 +195,7 @@ for i in range(int(input_page),page):
                 #print(marka, model, year, price, number_href)
 
                     
-                order = "Нет информации"
+                order = None
                 status = "Б/у"
                 info = None
                 info_obj = soup.find_all("span", class_="media-heading cut-h-375")
@@ -218,26 +219,26 @@ for i in range(int(input_page),page):
                 image_obj = str(soup.find("img", class_="fotorama__img"))
                 # print(image_obj)
                 foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
-                print(foto)
+                #print(foto)
                 if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
                     img = requests.get(foto)
-                    img_option = open(f"fotku/{name_href}.png", 'wb')
+                    img_option = open(f"{folder_name}/{name_href}.png", 'wb')
                     img_option.write(img.content)
                     #img_option.close
 
                     im = requests.get(foto)
 
-                    with open(f"fotku/{name_href}.png", "wb+") as file:
+                    with open(f"{folder_name}/{name_href}.png", "wb+") as file:
                         file.write(im.content)  # Для сохранения на компьютер
 
-                    im = Image.open(f"fotku/{name_href}.png")
+                    im = Image.open(f"{folder_name}/{name_href}.png")
                     pixels = im.load()  # список с пикселями
                     x, y = im.size  # ширина (x) и высота (y) изображения
                     min_line_white = []
                     n=0
                     for j in range(y):
                         white_pix = 0
-        
+            
                         for i in range(x):
                             # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
                             if pixels[i, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
@@ -250,23 +251,25 @@ for i in range(int(input_page),page):
                         min_line_white.append(white_pix)
                     left_border = int(min(min_line_white)/2)
                     #print(left_border)
-                    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"fotku/{name_href}.png", quality=95)
+                    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"{folder_name}/{name_href}.png", quality=95)
 
 
 
 
 
-                    img = Image.open(f"fotku/{name_href}.png")
-
+                    img = Image.open(f"{folder_name}/{name_href}.png")
+                    print(foto, "страница номер ", i)
                     #img = Image.open(f"fotku/{name_href}.png")    
                     img.paste(watermark,(-275,-97), watermark)
                     img.paste(watermark,(-230,1), watermark)
-                    img.save(f"fotku/{name_href}.png", format="png")
+                    img.save(f"{folder_name}/{name_href}.png", format="png")
                     img_option.close
                     #os.remove("img.png")
                     #print(f"{name_href} - неверный формат или ерунда")
                 else:
-                    foto = "Нет фотографии"    
+                    foto = "Нет фотографии"
+                    print(name_href , "без фотки")
+                        
                 benzik_obj = soup.find_all("div", style="font-size: 17px;")
                 fuel = None
                 transmission = " "
