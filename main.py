@@ -4,13 +4,16 @@ from selenium import webdriver
 from selenium.webdriver.chrome.service import Service
 from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.common.by import By
 import time
 import requests
 from bs4 import BeautifulSoup
 import os
 import shutil
 import csv
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 import time
 
 
@@ -101,8 +104,9 @@ with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
             "ФОТО",
         )
     )
-
+wait = WebDriverWait(driver, 7200)
 driver.get(url=url)
+wait.until(EC.element_to_be_clickable((By.ID, "wrapper")))
 time.sleep(2)
 
 with open("index.html", "w", encoding="utf-8") as file:
@@ -160,7 +164,10 @@ for i in range(int(input_page),page):
         #print(num_provider)
         if num_provider not in black_list:
 
+            
+            wait = WebDriverWait(driver, 7200)
             driver.get(url=number_href)
+            wait.until(EC.element_to_be_clickable((By.ID, "wrapper")))
             with open(f"{number}.html", "w", encoding="utf-8") as file:
                 file.write(driver.page_source)
 
@@ -230,42 +237,45 @@ for i in range(int(input_page),page):
 
                     with open(f"{folder_name}/{name_href}.png", "wb+") as file:
                         file.write(im.content)  # Для сохранения на компьютер
-
-                    im = Image.open(f"{folder_name}/{name_href}.png")
-                    pixels = im.load()  # список с пикселями
-                    x, y = im.size  # ширина (x) и высота (y) изображения
-                    min_line_white = []
-                    n=0
-                    for j in range(y):
-                        white_pix = 0
+                    try:
+                        im = Image.open(f"{folder_name}/{name_href}.png")
+                        pixels = im.load()  # список с пикселями
+                        x, y = im.size  # ширина (x) и высота (y) изображения
+                        min_line_white = []
+                        n=0
+                        for j in range(y):
+                            white_pix = 0
             
-                        for m in range(x):
-                            # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
-                            if pixels[m, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
-                                white_pix += 1
-                        if white_pix == x:
-                            n += 1
-                        #print(white_pix, x, n)
+                            for m in range(x):
+                                # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
+                                if pixels[m, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
+                                    white_pix += 1
+                            if white_pix == x:
+                                n += 1
+                            #print(white_pix, x, n)
 
-                        #print(white_pix)
-                        min_line_white.append(white_pix)
-                    left_border = int(min(min_line_white)/2)
-                    #print(left_border)
-                    im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"{folder_name}/{name_href}.png", quality=95)
-
-
+                            #print(white_pix)
+                            min_line_white.append(white_pix)
+                        left_border = int(min(min_line_white)/2)
+                        #print(left_border)
+                        im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"{folder_name}/{name_href}.png", quality=95)
 
 
 
-                    img = Image.open(f"{folder_name}/{name_href}.png")
-                    print(foto, "страница номер ", i)
-                    #img = Image.open(f"fotku/{name_href}.png")    
-                    img.paste(watermark,(-275,-97), watermark)
-                    img.paste(watermark,(-230,1), watermark)
-                    img.save(f"{folder_name}/{name_href}.png", format="png")
-                    img_option.close
-                    #os.remove("img.png")
-                    #print(f"{name_href} - неверный формат или ерунда")
+
+
+                        img = Image.open(f"{folder_name}/{name_href}.png")
+                        print(foto, "страница номер ", i)
+                        #img = Image.open(f"fotku/{name_href}.png")    
+                        img.paste(watermark,(-275,-97), watermark)
+                        img.paste(watermark,(-230,1), watermark)
+                        img.save(f"{folder_name}/{name_href}.png", format="png")
+                        img_option.close
+                        #os.remove("img.png")
+                        #print(f"{name_href} - неверный формат или ерунда")
+                    except UnidentifiedImageError:
+                        foto = "Битая фотка"
+                        print("Битая фотка")
                 else:
                     foto = "Нет фотографии"
                     print(name_href , "без фотки")
