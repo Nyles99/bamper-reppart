@@ -15,152 +15,67 @@ import shutil
 import csv
 from PIL import Image, UnidentifiedImageError
 import time
+import asyncio
+import aiohttp
 
 
-input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
-input_page = input("С какой страницы парсим (пиши 1, если это было не остановка) - ")
-headers = {
+def create_black_list():
+    black_list = []
+    file1 = open("black-list.txt", "r")
+    while True:
+        # считываем строку
+        line = file1.readline()
+        line = line.replace("\n","").replace("'","").replace(" ","")
+        # прерываем цикл, если строка пустая
+        if not line:
+            break
+        # выводим строку
+        black_list.append(line)
+        #print(black_list)
+
+    # закрываем файл
+    file1.close
+    return(black_list)
+
+
+async def get_page_data(page, input_year, black_list, folder_name, usd_byn, watermark):
+    headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
-}
+    }
+    options = webdriver.ChromeOptions()
+    options.add_argument("--disable-blink-features=AutomationControlled")
+    options.add_experimental_option('excludeSwitches', ['enable-logging'])
+    #options.add_experimental_option('excludeSwitches', ['enable-automation'])
+    #options.add_experimental_option('useAutomationExtension', False)
+    options.add_argument('--ignore-certificate-errors')
+    #options.add_argument("--proxy-server=31.204.2.182:9142")
+    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
-# Адрес сайта, с которого мы будем получать данные
-url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
-    
-# Получаем содержимое страницы
-response = requests.get(url_byn)
-    
-# Создаем объект BeautifulSoup для парсинга HTML-разметки
-soup = BeautifulSoup(response.content, 'html.parser')
-    
-# Получаем элемент с курсом валюты
-result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
-    
-# Возвращаем курс валюты как число
-usd_byn =  float(result.replace(",", ".")[:4])
-print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-black_list = []
-"""proxies = []
-proxy = open("proxy.txt", "r")
-while True:
-    # считываем строку
-    line_proxy = proxy.readline()
-    line_proxy = line_proxy.replace("\n","").replace("'","").replace(" ","")
-    # прерываем цикл, если строка пустая
-    if not line_proxy:
-        break
-    # выводим строку
-    proxies.append(line_proxy)
-#print(black_list)
+    driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+        'source': '''
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array:
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise:
+            delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol:
+        '''
+    })
 
-# закрываем файл
-proxy.close"""
-file1 = open("black-list.txt", "r")
-while True:
-    # считываем строку
-    line = file1.readline()
-    line = line.replace("\n","").replace("'","").replace(" ","")
-    # прерываем цикл, если строка пустая
-    if not line:
-        break
-    # выводим строку
-    black_list.append(line)
-#print(black_list)
+    url = f"https://bamper.by/zchbu/god_2023-2023/store_Y/?ACTION=REWRITED3&FORM_DATA=god_{input_year}-{input_year}%2Fstore_Y&PAGEN_1={page}"
 
-# закрываем файл
-file1.close
-#print(file1.read())
-folder_name = input_year + "fotku_" + time.strftime('%Y-%m-%d')
-if os.path.exists(folder_name):
-    print("Папка уже есть")
-else:
-    os.mkdir(folder_name)
-url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/"
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-#options.add_experimental_option('excludeSwitches', ['enable-automation'])
-#options.add_experimental_option('useAutomationExtension', False)
-options.add_argument('--ignore-certificate-errors')
-options.add_argument("--proxy-server=31.204.2.182:9142")
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-    'source': '''
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array:
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise:
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol:
-    '''
-})
-
-#driver.get("https://2ip.ru")
-#time.sleep(15)
-watermark = Image.open("moe.png")
-with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
-    writer = csv.writer(file_data)
-
-    writer.writerow(
-        (
-            "АРТИКУЛ",
-            "МАРКА",
-            "МОДЕЛЬ",
-            "ГОД",
-            "ССЫЛКА НА ЗАПЧАСТЬ",
-            "ТОПЛИВО",
-            "ОБЪЕМ",
-            "ТИП ДВИГАТЕЛЯ",
-            "КОРОБКА",
-            "ТИП КУЗОВА",
-            "ЗАПЧАСТЬ",
-            "ОПИСАНИЕ",
-            "ПОД ЗАКАЗ",
-            "ЦЕНА",
-            "НОВАЯ",
-            "ФОТО",
-        )
-    )
-wait = WebDriverWait(driver, 7200)
-driver.get(url=url)
-wait.until(EC.element_to_be_clickable((By.ID, "wrapper")))
-time.sleep(2)
-
-with open("index.html", "w", encoding="utf-8") as file:
-    file.write(driver.page_source)
-
-with open("index.html", encoding="utf-8") as file:
-    src = file.read()
-
-soup = BeautifulSoup(src, 'html.parser')
-count = soup.find_all(class_="list-title js-var_iCount")
-
-part_href_url = {}
-artical_list =[]
-for item in count:
-    count_text = item.text
-num = ["0","1","2","3","4","5","6","7","8","9"]
-num_page = ""
-for char in count_text:
-    if char in num:
-                num_page = num_page + char
-# print(int(num_page))
-page = int(int(num_page) / 20) + 1
-print(page)
-os.remove("index.html")
-for i in range(int(input_page),page):  
-    url = f"https://bamper.by/zchbu/god_2023-2023/store_Y/?ACTION=REWRITED3&FORM_DATA=god_{input_year}-{input_year}%2Fstore_Y&PAGEN_1="+str(i)
-    print(url)
     driver.get(url=url)
     time.sleep(1)
-    print("страница номер ", i)
-    with open("index.html", "w", encoding="utf-8") as file:
+    print("страница номер ", page)
+    with open(f"index{page}.html", "w", encoding="utf-8") as file:
         file.write(driver.page_source)
 
-    with open("index.html", encoding="utf-8") as file:
+    with open(f"index{page}.html", encoding="utf-8") as file:
         src = file.read()
 
     soup = BeautifulSoup(src, 'html.parser')
     href_count = soup.find_all(class_="brazzers-gallery brazzers-daddy")
     n = 1
+    part_href_url = {}
+    artical_list =[]
     for item_href in href_count:
         href = "https://bamper.by" + item_href.get("href")
         part_href_url[n] = href
@@ -280,7 +195,7 @@ for i in range(int(input_page),page):
 
 
                         img = Image.open(f"{folder_name}/{name_href}.png")
-                        print(foto, "страница номер ", i)
+                        print(foto, "страница номер ", page)
                         #img = Image.open(f"fotku/{name_href}.png")    
                         img.paste(watermark,(-275,-97), watermark)
                         img.paste(watermark,(-230,1), watermark)
@@ -376,7 +291,117 @@ for i in range(int(input_page),page):
                 print(f'{name_href} меньше 20$, цена запчасти = {price}')
         else:
             print(f'{num_provider} из black-list {name_href}')
-    os.remove("index.html")
-driver.close()
-driver.quit()
+    os.remove(f"index{page}.html")
+    driver.close()
+    driver.quit()
+
+
+
+async def gather_data(input_year):
+    headers = {
+    "Accept" : "application/json, text/javascript, */*; q=0.01",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+    }
+
+    url = f"https://bamper.by/zchbu/god_{input_year}-{input_year}/store_Y/"
+
+    async with aiohttp.ClientSession() as session:
+        response = await session.get(url=url, headers=headers)
+        soup = BeautifulSoup(await response, 'lxml')
+        count = soup.find_all(class_="list-title js-var_iCount")
+
+        
+        for item in count:
+            count_text = item.text
+        num = ["0","1","2","3","4","5","6","7","8","9"]
+        num_page = ""
+        for char in count_text:
+            if char in num:
+                num_page = num_page + char
+        # print(int(num_page))
+        page_all = int(int(num_page) / 20) + 1
+        tasks = []
+    
+        for page in range (1, page_all + 1):
+            task = asyncio.create_task(get_page_data(page, input_year))
+            tasks.append(task)
+
+        await asyncio.gather(*tasks)
+
+def main():
+    input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
+    #input_page = input("С какой страницы парсим (пиши 1, если это было не остановка) - ")
+
+    folder_name = input_year + "fotku_" + time.strftime('%Y-%m-%d')
+    if os.path.exists(folder_name):
+        print("Папка уже есть")
+    else:
+        os.mkdir(folder_name)
+    
+    # Адрес сайта, с которого мы будем получать данные
+    url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
+    
+    # Получаем содержимое страницы
+    response = requests.get(url_byn)
+    
+    # Создаем объект BeautifulSoup для парсинга HTML-разметки
+    soup = BeautifulSoup(response.content, 'html.parser')
+    
+    # Получаем элемент с курсом валюты
+    result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
+    
+    # Возвращаем курс валюты как число
+    usd_byn =  float(result.replace(",", ".")[:4])
+    print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
+    black_list = create_black_list
+    watermark = Image.open("moe.png")
+    with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
+        writer = csv.writer(file_data)
+
+    writer.writerow(
+        (
+            "АРТИКУЛ",
+            "МАРКА",
+            "МОДЕЛЬ",
+            "ГОД",
+            "ССЫЛКА НА ЗАПЧАСТЬ",
+            "ТОПЛИВО",
+            "ОБЪЕМ",
+            "ТИП ДВИГАТЕЛЯ",
+            "КОРОБКА",
+            "ТИП КУЗОВА",
+            "ЗАПЧАСТЬ",
+            "ОПИСАНИЕ",
+            "ПОД ЗАКАЗ",
+            "ЦЕНА",
+            "НОВАЯ",
+            "ФОТО",
+        )
+    )
+
+    asyncio.run(gather_data(input_year))
+
+
+if __name__ == "__main__":
+    main()
+
+
+
+
+
+
+"""proxies = []
+proxy = open("proxy.txt", "r")
+while True:
+    # считываем строку
+    line_proxy = proxy.readline()
+    line_proxy = line_proxy.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line_proxy:
+        break
+    # выводим строку
+    proxies.append(line_proxy)
+# закрываем файл
+proxy.close"""
+
 
