@@ -19,6 +19,7 @@ import time
 
 input_year = input("Введи год, за который нужны запчасти в формате (например 2015) - ")
 input_page = input("С какой страницы парсим (пиши 1, если это было не остановка) - ")
+#proxy = input("введи прокси сервер с портом(формат 51.91.109.83:80) -  ")
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -67,7 +68,7 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 #options.add_experimental_option('excludeSwitches', ['enable-automation'])
 #options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--ignore-certificate-errors')
-#options.add_argument("--proxy-server=23.106.56.35")
+options.add_argument("--proxy-server=45.145.160.96:8000")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -79,7 +80,7 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 })
 
 #driver.get("https://2ip.ru")
-#time.sleep(15)
+#.sleep(15)
 watermark = Image.open("moe.png")
 with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
     writer = csv.writer(file_data)
