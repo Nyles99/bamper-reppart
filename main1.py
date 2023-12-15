@@ -52,6 +52,7 @@ for item in name_part:
     f.write("%s\n" % item)
 f.close()""" 
 
+input_model = input("Здорово, заебал, вводи марку авто,  запчасти которой хочешь спиздить  -  ")
 
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
@@ -59,6 +60,45 @@ headers = {
 }
 
 url = "https://bamper.by/catalog/modeli/"
+black_mark = []
+black_model = []
+
+folder_name = input_model + "_fotku_" + time.strftime('%Y-%m-%d')
+if os.path.exists(folder_name):
+    print("Папка уже есть")
+else:
+    os.mkdir(folder_name)
+
+file1 = open("black-mark.txt", "r", encoding="utf-8")
+while True:
+    # считываем строку
+    line = file1.readline()
+    line = line.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line:
+        break
+    # выводим строку
+    black_mark.append(line)
+#print(black_list)
+
+# закрываем файл
+file1.close
+
+file1 = open("black-model.txt", "r", encoding="utf-8")
+while True:
+    # считываем строку
+    line = file1.readline()
+    line = line.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line:
+        break
+    # выводим строку
+    black_model.append(line)
+#print(black_list)
+
+# закрываем файл
+file1.close
+
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -87,9 +127,71 @@ with open("index.html", encoding="utf-8") as file:
     src = file.read()
 
 soup = BeautifulSoup(src, 'html.parser')
-
-count = soup.find_all(class_="row").find_all("li")
+marka_need_list = {}
+count = soup.find_all("h3", class_="title-2")
 for item in count:
-    print(count)
+    item = str(item)
+    item_text = item[item.find("gray")+6 : item.find("/h3")-6]
+    if item_text not in black_mark:
+        item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
+        marka_need_list[item_text] = item_href_marka
+        #print(item_text)
+os.remove("index.html")
 
+for item_text_marka, item_href_marka in marka_need_list.items():
+    if item_text_marka == input_model:
 
+        driver.get(url=item_href_marka)
+        time.sleep(1)
+
+        with open(f"{item_text_marka}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
+
+        with open(f"{item_text_marka}.html", encoding="utf-8") as file:
+            src = file.read()
+
+        soup = BeautifulSoup(src, 'html.parser')
+        model_need_list = {}
+        count = soup.find_all("a")
+        for item in count:
+            item = str(item)
+            if "запчасти для <b>" in item:
+                item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
+                #print(item_text)
+                if item_text not in black_model:
+                    item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
+                    model_need_list[item_text] = item_href_model
+                    #print(item_text, item_href_model)
+        os.remove(f"{item_text_marka}.html")
+
+all_categories_part = {}
+n=1
+for item_text_model, item_href_model in model_need_list.items():
+    print(item_href_model)
+    driver.get(url=item_href_model)
+    time.sleep(1)
+
+    with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
+        file.write(driver.page_source)
+
+    with open(f"{item_text_model}.html", encoding="utf-8") as file:
+        src = file.read()
+    
+    soup = BeautifulSoup(src, 'html.parser')
+    
+    count = soup.find_all(target="_blank")
+    for item in count:
+        item = str(item)
+        #print(item.find("zchbu"))
+        if item.find('zchbu') == 10:
+            item_text = item[item.find("_blank")+8 : len(item)-4]
+            item_href_categories = "https://bamper.by"+item[item.find("href=")+6 : item.find("target") - 2]+"store_Y/"
+            all_categories_part[n] = item_href_categories
+            #print(n)
+            n += 1
+    os.remove(f"{item_text_model}.html")
+
+#print(all_categories_part)
+
+for number, item_href_categories in all_categories_part.items():
+    print(number, item_href_categories)

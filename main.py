@@ -83,11 +83,7 @@ options.add_experimental_option('excludeSwitches', ['enable-logging'])
 #options.add_experimental_option('excludeSwitches', ['enable-automation'])
 #options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--ignore-certificate-errors')
-<<<<<<< HEAD
-options.add_argument("--proxy-server=45.145.160.96:8000")
-=======
-options.add_argument("--proxy-server=31.204.2.182:9142")
->>>>>>> f827f9513dcdc28293c0c5b8490620b3d1dac3ee
+#options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
