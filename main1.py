@@ -99,6 +99,26 @@ while True:
 # закрываем файл
 file1.close
 
+black_list = []
+
+file1 = open("black-list.txt", "r")
+while True:
+    # считываем строку
+    line = file1.readline()
+    line = line.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line:
+        break
+    # выводим строку
+    black_list.append(line)
+#print(black_list)
+
+# закрываем файл
+file1.close
+
+number_zapchast = 1
+zapchast_list = {}
+
 
 options = webdriver.ChromeOptions()
 options.add_argument("--disable-blink-features=AutomationControlled")
@@ -192,6 +212,74 @@ for item_text_model, item_href_model in model_need_list.items():
     os.remove(f"{item_text_model}.html")
 
 #print(all_categories_part)
-
+all_zapchast = {}
 for number, item_href_categories in all_categories_part.items():
-    print(number, item_href_categories)
+    #print(number, item_href_categories)
+    driver.get(url=item_href_categories)
+    time.sleep(1)
+
+    with open(f"{number}.html", "w", encoding="utf-8") as file:
+        file.write(driver.page_source)
+
+    with open(f"{number}.html", encoding="utf-8") as file:
+        src = file.read()
+
+    soup = BeautifulSoup(src, 'html.parser')
+    count = soup.find("h5", class_="list-title js-var_iCount")
+    #print(count)
+    #Проверка сколько страниц с фильтром!!!!!!!!!!!!!!!!!!!!!!
+    for item in count:
+        item = str(item)
+        if "<b>" in item:
+            #print(item)
+            num_page = int(item[3:item.find("</b>")])
+    if num_page > 20:
+        page = int(num_page / 20) + 1
+    else:
+        page = 1
+    #print(page)
+    markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
+    #print(markah)
+    modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/store_")]
+    #print(modelh)
+    zapchast = item_href_categories[item_href_categories.find("zchbu")+6:item_href_categories.find("/marka_")]
+    #print(zapchast)
+    #Уровень страница с запчастями!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+    for i in range(1,page+1):
+        url_page = "https://bamper.by/zchbu/"+zapchast+"/marka_"+markah+"/model_"+modelh+"/store_Y/?ACTION=REWRITED3&FORM_DATA="+ zapchast+ "%2Fmarka_" + markah + "%2Fmodel_" + modelh +"%2Fstore_Y&PAGEN_1="+str(i)
+        #print(url_page)
+        driver.get(url=url_page)
+        time.sleep(1)
+
+        with open(f"{zapchast}_{i}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
+
+        with open(f"{zapchast}_{i}.html", encoding="utf-8") as file:
+            src = file.read()
+
+        soupp = BeautifulSoup(src, 'html.parser')
+
+        href_part = soupp.find_all("a",target="_blank", class_="brazzers-gallery brazzers-daddy")
+        for item in href_part:
+            item = item.get("href")
+            href_to_zapchast = "https://bamper.by/zchbu/" + item
+            #print(item)
+            number_href_reverse = item[::-1]
+            number_href_reverse_second = number_href_reverse[1:]
+            number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
+            name_href = number_href_reverse[::-1]
+            #print(name_href)
+            num_provider = name_href[: name_href.find("-")]
+            #print(num_provider)
+            if num_provider not in black_list:
+                zapchast_list[number_zapchast] = href_to_zapchast
+                number_zapchast += 1
+                #print(number_zapchast, href_to_zapchast)
+            else:
+                print(href_to_zapchast + " находится в black-list")
+
+        os.remove(f"{zapchast}_{i}.html")
+    os.remove(f"{number}.html")
+
+for number_zapchast, item_href_zapchast in zapchast_list.items():
+    
