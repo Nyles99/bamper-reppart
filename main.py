@@ -230,7 +230,7 @@ n=1
 for item_text_model, item_href_model in model_need_list.items():
     print(item_href_model)
     driver.get(url=item_href_model)
-    time.sleep(1)
+    time.sleep(5)
 
     with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
         file.write(driver.page_source)
@@ -253,7 +253,7 @@ for item_text_model, item_href_model in model_need_list.items():
     os.remove(f"{item_text_model}.html")
 
 #print(all_categories_part)
-all_zapchast = {}
+
 for number, item_href_categories in all_categories_part.items():
     #print(number, item_href_categories)
     driver.get(url=item_href_categories)
@@ -325,7 +325,7 @@ for number, item_href_categories in all_categories_part.items():
                 soup = BeautifulSoup(src, 'html.parser' )
 
                 price_obj = soup.find_all("meta", itemprop="price")
-                print (price_obj)
+                #print (price_obj)
                 if price_obj != []:
                     for item_price in price_obj:
                         price = item_price.get("content").replace(" ","")
@@ -414,9 +414,9 @@ for number, item_href_categories in all_categories_part.items():
 
 
                                 img = Image.open(f"{folder_name}/{name_href}.png")
-                                print(foto, "страница номер ", i)
+                                print(foto)
                                 #img = Image.open(f"fotku/{name_href}.png")    
-                                img.paste(watermark,(-275,-97), watermark)
+                                img.paste(watermark,(-265,-97), watermark)
                                 img.paste(watermark,(-230,1), watermark)
                                 img.save(f"{folder_name}/{name_href}.png", format="png")
                                 img_option.close
@@ -504,13 +504,13 @@ for number, item_href_categories in all_categories_part.items():
                             )
                         )
                         file.close()
-                        os.remove(f"{number}.html")
+                        os.remove(f"{name_href}.html")
                     else:
-                        os.remove(f"{number}.html")
+                        os.remove(f"{name_href}.html")
                         print(f'{name_href} меньше 20$, цена запчасти = {price}')
                 else:
                     print(href_to_zapchast + "цена по запросу, ахуели?)")
-                os.remove(f"{name_href}.html")
+                    os.remove(f"{name_href}.html")
             
             
             else:
