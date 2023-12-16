@@ -518,3 +518,4 @@ for number, item_href_categories in all_categories_part.items():
 
         os.remove(f"{zapchast}_{i}.html")
     os.remove(f"{number}.html")
+os.remove(f"index.html")
