@@ -154,7 +154,7 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 })
 
 watermark = Image.open("moe.png")
-with open(f"data_bamper.csv", "w", encoding="utf-8") as file_data:
+with open(f"{input_model}_data_bamper.csv", "w", encoding="utf-8") as file_data:
     writer = csv.writer(file_data)
 
     writer.writerow(
@@ -329,25 +329,31 @@ for number, item_href_categories in all_categories_part.items():
                 if price_obj != []:
                     for item_price in price_obj:
                         price = item_price.get("content").replace(" ","")
-                        price = round(float(price)/usd_byn) 
-                    print(price)
-                    if price > 20:
+                        price = round(float(price)/usd_byn)
+                else:
+                    price = 100000000
+                print(price)
+                if price > 20:
+                    if price == 100000000:
+                        price = "Цена не указана"
 
-                    
+                    marka_obj = soup.find_all("span", itemprop="name")
+                    for item_marka in marka_obj:
+                        all_title_name = str(item_marka)
+                        string = all_title_name[all_title_name.find("<b>") + 1 : ]
+                        number_b = string.find('</b>')
+                        name_part = string[2:number_b]
+                        model_and_year = string[number_b+8 :]
+                        marka = model_and_year[: model_and_year.find(" ")]
+                        model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
+                        year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
+                    if int(year) > 2011:
+
                         artical_obj = soup.find_all("span", class_="data-type f13")
                         for item_artical in artical_obj:
                             artical = item_artical.text
 
-                        marka_obj = soup.find_all("span", itemprop="name")
-                        for item_marka in marka_obj:
-                            all_title_name = str(item_marka)
-                            string = all_title_name[all_title_name.find("<b>") + 1 : ]
-                            number_b = string.find('</b>')
-                            name_part = string[2:number_b]
-                            model_and_year = string[number_b+8 :]
-                            marka = model_and_year[: model_and_year.find(" ")]
-                            model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
-                            year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
+                        
                         #print(marka, model, year, price, number_href)
 
                             
@@ -416,7 +422,7 @@ for number, item_href_categories in all_categories_part.items():
                                 img = Image.open(f"{folder_name}/{name_href}.png")
                                 print(foto)
                                 #img = Image.open(f"fotku/{name_href}.png")    
-                                img.paste(watermark,(-265,-97), watermark)
+                                img.paste(watermark,(-272,-97), watermark)
                                 img.paste(watermark,(-230,1), watermark)
                                 img.save(f"{folder_name}/{name_href}.png", format="png")
                                 img_option.close
@@ -480,7 +486,7 @@ for number, item_href_categories in all_categories_part.items():
                         #print(volume, fuel, transmission, engine, car_body)
                         #print(benzik)
 
-                        file = open(f"data_bamper.csv", "a", encoding="utf-8", newline='')
+                        file = open(f"{input_model}_data_bamper.csv", "a", encoding="utf-8", newline='')
                         writer = csv.writer(file)
 
                         writer.writerow(
@@ -506,11 +512,14 @@ for number, item_href_categories in all_categories_part.items():
                         file.close()
                         os.remove(f"{name_href}.html")
                     else:
+                        print("запчасть старенькая,а нам нужна молоденькая")
                         os.remove(f"{name_href}.html")
-                        print(f'{name_href} меньше 20$, цена запчасти = {price}')
                 else:
-                    print(href_to_zapchast + "цена по запросу, ахуели?)")
                     os.remove(f"{name_href}.html")
+                    print(f'{name_href} меньше 20$, цена запчасти = {price}')
+                """else:
+                    print(href_to_zapchast + "цена по запросу, ахуели?)")
+                    os.remove(f"{name_href}.html")"""
             
             
             else:
@@ -519,3 +528,5 @@ for number, item_href_categories in all_categories_part.items():
         os.remove(f"{zapchast}_{i}.html")
     os.remove(f"{number}.html")
 os.remove(f"index.html")
+
+input(f"Парсинг по {input_model} законичил свою работу, нажми Enter")
