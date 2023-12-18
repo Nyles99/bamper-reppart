@@ -52,7 +52,8 @@ for item in name_part:
     f.write("%s\n" % item)
 f.close()""" 
 
-input_model = input("Здорово, заебал, вводи марку авто,  запчасти которой хочешь спиздить  -  ")
+input_model = "Vse"
+input_number = "Введи один, если не уверен в себе и хочешь обновить марки и модели в списке - "
 
 # Адрес сайта, с которого мы будем получать данные
 url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
@@ -137,19 +138,19 @@ zapchast_list = {}
 
 
 options = webdriver.ChromeOptions()
-#options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
 #options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--ignore-certificate-errors')
-options.addArguments("start-maximized") # // https://stackoverflow.com/a/26283818/1689770
-options.addArguments("enable-automation")#  // https://stackoverflow.com/a/43840128/1689770
-options.addArguments("--headless")#  // only if you are ACTUALLY running headless
-options.addArguments("--no-sandbox")# //https://stackoverflow.com/a/50725918/1689770
-options.addArguments("--disable-dev-shm-usage")# //https://stackoverflow.com/a/50725918/1689770
-options.addArguments("--disable-browser-side-navigation")# //https://stackoverflow.com/a/49123152/1689770
-options.addArguments("--disable-gpu")
-options.addArguments("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
-options.addArguments("--enable-javascript")
+options.add_argument("start-maximized") # // https://stackoverflow.com/a/26283818/1689770
+options.add_argument("enable-automation")#  // https://stackoverflow.com/a/43840128/1689770
+#options.add_argument("--headless")#  // only if you are ACTUALLY running headless
+options.add_argument("--no-sandbox")# //https://stackoverflow.com/a/50725918/1689770
+options.add_argument("--disable-dev-shm-usage")# //https://stackoverflow.com/a/50725918/1689770
+options.add_argument("--disable-browser-side-navigation")# //https://stackoverflow.com/a/49123152/1689770
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
+options.add_argument("--enable-javascript")
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -186,81 +187,84 @@ with open(f"{input_model}_data_bamper.csv", "w", encoding="utf-8") as file_data:
             "ФОТО",
         )
     )
+if input_number == "1":
 
-driver.get(url=url)
-#driver.manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS)
-time.sleep(2)
+    driver.get(url=url)
+    #driver.manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS)
+    time.sleep(2)
 
-with open("index.html", "w", encoding="utf-8") as file:
-    file.write(driver.page_source)
-
-with open("index.html", encoding="utf-8") as file:
-    src = file.read()
-
-soup = BeautifulSoup(src, 'html.parser')
-marka_need_list = {}
-count = soup.find_all("h3", class_="title-2")
-for item in count:
-    item = str(item)
-    item_text = item[item.find("gray")+6 : item.find("/h3")-6]
-    if item_text not in black_mark:
-        item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
-        marka_need_list[item_text] = item_href_marka
-        #print(item_text)
-os.remove("index.html")
-
-for item_text_marka, item_href_marka in marka_need_list.items():
-    if item_text_marka == input_model:
-
-        driver.get(url=item_href_marka)
-        time.sleep(1)
-
-        with open(f"{item_text_marka}.html", "w", encoding="utf-8") as file:
-            file.write(driver.page_source)
-
-        with open(f"{item_text_marka}.html", encoding="utf-8") as file:
-            src = file.read()
-
-        soup = BeautifulSoup(src, 'html.parser')
-        model_need_list = {}
-        count = soup.find_all("a")
-        for item in count:
-            item = str(item)
-            if "запчасти для <b>" in item:
-                item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
-                #print(item_text)
-                if item_text not in black_model:
-                    item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
-                    model_need_list[item_text] = item_href_model
-                    #print(item_text, item_href_model)
-        os.remove(f"{item_text_marka}.html")
-
-all_categories_part = {}
-n=1
-for item_text_model, item_href_model in model_need_list.items():
-    print(item_href_model)
-    driver.get(url=item_href_model)
-    time.sleep(5)
-
-    with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
+    with open("index.html", "w", encoding="utf-8") as file:
         file.write(driver.page_source)
 
-    with open(f"{item_text_model}.html", encoding="utf-8") as file:
+    with open("index.html", encoding="utf-8") as file:
         src = file.read()
-    
+
     soup = BeautifulSoup(src, 'html.parser')
-    
-    count = soup.find_all(target="_blank")
+    marka_need_list = {}
+    count = soup.find_all("h3", class_="title-2")
     for item in count:
         item = str(item)
-        #print(item.find("zchbu"))
-        if item.find('zchbu') == 10:
-            item_text = item[item.find("_blank")+8 : len(item)-4]
-            item_href_categories = "https://bamper.by"+item[item.find("href=")+6 : item.find("target") - 2]+"store_Y/"
-            all_categories_part[n] = item_href_categories
-            #print(n)
-            n += 1
-    os.remove(f"{item_text_model}.html")
+        item_text = item[item.find("gray")+6 : item.find("/h3")-6]
+        if item_text not in black_mark:
+            item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
+            marka_need_list[item_text] = item_href_marka
+            #print(item_text)
+    os.remove("index.html")
+    model_need_list = {}
+    for item_text_marka, item_href_marka in marka_need_list.items():
+        if item_text_marka not in black_mark:
+            #print(item_text_marka)
+            driver.get(url=item_href_marka)
+            time.sleep(1)
+
+            with open(f"{item_text_marka}.html", "w", encoding="utf-8") as file:
+                file.write(driver.page_source)
+
+            with open(f"{item_text_marka}.html", encoding="utf-8") as file:
+                src = file.read()
+
+            soup = BeautifulSoup(src, 'html.parser')
+        
+            count = soup.find_all("a")
+            for item in count:
+                item = str(item)
+                if "запчасти для <b>" in item:
+                    item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
+                    #print(item_text)
+                    if item_text not in black_model:
+                        item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
+                        model_need_list[item_text] = item_href_model
+                        #print(item_text, item_href_model)
+            os.remove(f"{item_text_marka}.html")
+
+    all_categories_part = {}
+    n=1
+    for item_text_model, item_href_model in model_need_list.items():
+        print(item_text_model)
+        if item_text_model not in black_model:
+            item_text_model = item_text_model.replace("/","_")
+            driver.get(url=item_href_model)
+            time.sleep(2)
+
+            with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
+                file.write(driver.page_source)
+
+            with open(f"{item_text_model}.html", encoding="utf-8") as file:
+                src = file.read()
+        
+            soup = BeautifulSoup(src, 'html.parser')
+        
+            count = soup.find_all(target="_blank")
+            for item in count:
+                item = str(item)
+                #print(item.find("zchbu"))
+                if item.find('zchbu') == 10:
+                    item_text = item[item.find("_blank")+8 : len(item)-4]
+                    item_href_categories = "https://bamper.by"+item[item.find("href=")+6 : item.find("target") - 2]+"store_Y/"
+                    all_categories_part[n] = item_href_categories
+                    #print(n)
+                    n += 1
+            os.remove(f"{item_text_model}.html")
 
 #print(all_categories_part)
 
@@ -323,6 +327,9 @@ for number, item_href_categories in all_categories_part.items():
             num_provider = name_href[: name_href.find("-")]
             #print(num_provider)
             if num_provider not in black_list:
+                if requests.get(href_to_zapchast).status_code != 200:
+                    while (requests.get(href_to_zapchast).status_code != 200):
+                        driver.get(href_to_zapchast)
                 wait = WebDriverWait(driver, 7200)
                 driver.get(url=href_to_zapchast)
                 wait.until(EC.element_to_be_clickable((By.ID, "wrapper")))
@@ -537,6 +544,6 @@ for number, item_href_categories in all_categories_part.items():
 
         os.remove(f"{zapchast}_{i}.html")
     os.remove(f"{number}.html")
-os.remove(f"index.html")
+
 
 input(f"Парсинг по {input_model} законичил свою работу, нажми Enter")
