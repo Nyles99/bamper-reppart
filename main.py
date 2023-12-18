@@ -137,11 +137,20 @@ zapchast_list = {}
 
 
 options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
+#options.add_argument("--disable-blink-features=AutomationControlled")
 options.add_experimental_option('excludeSwitches', ['enable-logging'])
-#options.add_experimental_option('excludeSwitches', ['enable-automation'])
 #options.add_experimental_option('useAutomationExtension', False)
 options.add_argument('--ignore-certificate-errors')
+options.addArguments("start-maximized") # // https://stackoverflow.com/a/26283818/1689770
+options.addArguments("enable-automation")#  // https://stackoverflow.com/a/43840128/1689770
+options.addArguments("--headless")#  // only if you are ACTUALLY running headless
+options.addArguments("--no-sandbox")# //https://stackoverflow.com/a/50725918/1689770
+options.addArguments("--disable-dev-shm-usage")# //https://stackoverflow.com/a/50725918/1689770
+options.addArguments("--disable-browser-side-navigation")# //https://stackoverflow.com/a/49123152/1689770
+options.addArguments("--disable-gpu")
+options.addArguments("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
+options.addArguments("--enable-javascript")
+
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
@@ -179,6 +188,7 @@ with open(f"{input_model}_data_bamper.csv", "w", encoding="utf-8") as file_data:
     )
 
 driver.get(url=url)
+#driver.manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS)
 time.sleep(2)
 
 with open("index.html", "w", encoding="utf-8") as file:
