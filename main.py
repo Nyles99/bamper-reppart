@@ -52,7 +52,7 @@ for item in name_part:
     f.write("%s\n" % item)
 f.close()""" 
 
-input_model = "Vse"
+input_model = input("Vse")
 input_number = "Введи один, если не уверен в себе и хочешь обновить марки и модели в списке - "
 
 # Адрес сайта, с которого мы будем получать данные
@@ -187,84 +187,85 @@ with open(f"{input_model}_data_bamper.csv", "w", encoding="utf-8") as file_data:
             "ФОТО",
         )
     )
-if input_number == "1":
 
-    driver.get(url=url)
-    #driver.manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS)
-    time.sleep(2)
 
-    with open("index.html", "w", encoding="utf-8") as file:
-        file.write(driver.page_source)
+driver.get(url=url)
+#driver.manage().timeouts().pageLoadTimeout(30L, TimeUnit.SECONDS)
+time.sleep(2)
 
-    with open("index.html", encoding="utf-8") as file:
-        src = file.read()
+with open("index.html", "w", encoding="utf-8") as file:
+    file.write(driver.page_source)
 
-    soup = BeautifulSoup(src, 'html.parser')
-    marka_need_list = {}
-    count = soup.find_all("h3", class_="title-2")
-    for item in count:
-        item = str(item)
-        item_text = item[item.find("gray")+6 : item.find("/h3")-6]
-        if item_text not in black_mark:
-            item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
-            marka_need_list[item_text] = item_href_marka
-            #print(item_text)
-    os.remove("index.html")
-    model_need_list = {}
-    for item_text_marka, item_href_marka in marka_need_list.items():
-        if item_text_marka not in black_mark:
-            #print(item_text_marka)
-            driver.get(url=item_href_marka)
-            time.sleep(1)
+with open("index.html", encoding="utf-8") as file:
+    src = file.read()
 
-            with open(f"{item_text_marka}.html", "w", encoding="utf-8") as file:
-                file.write(driver.page_source)
+soup = BeautifulSoup(src, 'html.parser')
+marka_need_list = {}
+count = soup.find_all("h3", class_="title-2")
+for item in count:
+    item = str(item)
+    item_text = item[item.find("gray")+6 : item.find("/h3")-6]
+    print(item_text)
+    if item_text not in black_mark:
+        item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
+        marka_need_list[item_text] = item_href_marka
+        #print(item_text)
+os.remove("index.html")
+model_need_list = {}
+for item_text_marka, item_href_marka in marka_need_list.items():
+    if item_text_marka not in black_mark:
+        #print(item_text_marka)
+        driver.get(url=item_href_marka)
+        time.sleep(1)
 
-            with open(f"{item_text_marka}.html", encoding="utf-8") as file:
-                src = file.read()
+        with open(f"{item_text_marka}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
 
-            soup = BeautifulSoup(src, 'html.parser')
+        with open(f"{item_text_marka}.html", encoding="utf-8") as file:
+            src = file.read()
+
+        soup = BeautifulSoup(src, 'html.parser')
         
-            count = soup.find_all("a")
-            for item in count:
-                item = str(item)
-                if "запчасти для <b>" in item:
-                    item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
-                    #print(item_text)
-                    if item_text not in black_model:
-                        item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
-                        model_need_list[item_text] = item_href_model
-                        #print(item_text, item_href_model)
-            os.remove(f"{item_text_marka}.html")
+        count = soup.find_all("a")
+        for item in count:
+            item = str(item)
+            if "запчасти для <b>" in item:
+                item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
+                #print(item_text)
+                if item_text not in black_model:
+                    item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
+                    model_need_list[item_text] = item_href_model
+                    #print(item_text, item_href_model)
+        os.remove(f"{item_text_marka}.html")
 
-    all_categories_part = {}
-    n=1
-    for item_text_model, item_href_model in model_need_list.items():
-        print(item_text_model)
-        if item_text_model not in black_model:
-            item_text_model = item_text_model.replace("/","_")
-            driver.get(url=item_href_model)
-            time.sleep(2)
+all_categories_part = {}
+n=1
+for item_text_model, item_href_model in model_need_list.items():
+    print(item_text_model)
+    if item_text_model not in black_model:
+        item_text_model = item_text_model.replace("/","_")
+        driver.get(url=item_href_model)
+        time.sleep(2)
 
-            with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
-                file.write(driver.page_source)
+        with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
 
-            with open(f"{item_text_model}.html", encoding="utf-8") as file:
-                src = file.read()
-        
-            soup = BeautifulSoup(src, 'html.parser')
-        
-            count = soup.find_all(target="_blank")
-            for item in count:
-                item = str(item)
-                #print(item.find("zchbu"))
-                if item.find('zchbu') == 10:
-                    item_text = item[item.find("_blank")+8 : len(item)-4]
-                    item_href_categories = "https://bamper.by"+item[item.find("href=")+6 : item.find("target") - 2]+"store_Y/"
-                    all_categories_part[n] = item_href_categories
-                    #print(n)
-                    n += 1
-            os.remove(f"{item_text_model}.html")
+        with open(f"{item_text_model}.html", encoding="utf-8") as file:
+            src = file.read()
+    
+        soup = BeautifulSoup(src, 'html.parser')
+    
+        count = soup.find_all(target="_blank")
+        for item in count:
+            item = str(item)
+            #print(item.find("zchbu"))
+            if item.find('zchbu') == 10:
+                item_text = item[item.find("_blank")+8 : len(item)-4]
+                item_href_categories = "https://bamper.by"+item[item.find("href=")+6 : item.find("target") - 2]+"store_Y/"
+                all_categories_part[n] = item_href_categories
+                #print(n)
+                n += 1
+        os.remove(f"{item_text_model}.html")
 
 #print(all_categories_part)
 
