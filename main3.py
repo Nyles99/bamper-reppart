@@ -100,7 +100,7 @@ src = req.text
 #    src = file.read()
 soup = BeautifulSoup(src, "lxml")
 #print(soup)
-"""marka_need_list = {}
+marka_need_list = {}
 model_need_list = {}
 
 
@@ -136,7 +136,7 @@ for item_text_marka, item_href_marka in marka_need_list.items():
                 #print(item_text, item_href_model)
 
 with open("modelu.json", "a", encoding="utf-8") as file:
-    json.dump(model_need_list, file, indent=4, ensure_ascii=False)"""        
+    json.dump(model_need_list, file, indent=4, ensure_ascii=False)        
 
 with open('modelu.json', encoding="utf-8") as file:
     model_need_list = json.load(file)
