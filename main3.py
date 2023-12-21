@@ -191,19 +191,16 @@ for item_text_model, item_href_model in model_need_list.items():
                     if count == []:
                         all_categories_part[n] = item_href_categories
                         n += 1
-                        print(n, item_href_categories)   
-                    
-
-                    
-
-                    
-
-            
+                        print(n, item_href_categories)           
+           
 
 with open("categories.json", "a", encoding="utf-8") as file:
-    json.dump(all_categories_part, file, indent=4, ensure_ascii=False)       
+    json.dump(all_categories_part, file, indent=4, ensure_ascii=False)
 
-with open('categories.json', encoding="utf-8") as file:
+       
+
+
+"""with open('categories.json', encoding="utf-8") as file:
     all_categories_part = json.load(file)
 
 
@@ -427,7 +424,7 @@ for number_categories, item_href_categories in all_categories_part.items():
 
 
     else:
-        print(href_to_zapchast + " находится в black-list")
+        print(href_to_zapchast + " находится в black-list")"""
     
 
 input(f"Парсинг по {input_model} законичил свою работу, нажми Enter")
