@@ -194,9 +194,9 @@ with open("srazy_parsim.json", "a", encoding="utf-8") as file:
     json.dump(zapchastu_to_parsing, file, indent=4, ensure_ascii=False)
 
 with open("go_to_catalog.json", "a", encoding="utf-8") as file:
-    json.dump(all_categories_part, file, indent=4, ensure_ascii=False)"""
+    json.dump(all_categories_part, file, indent=4, ensure_ascii=False)
 
-print(summa)
+print(summa)"""
 
 # Адрес сайта, с которого мы будем получать данные
 url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
@@ -255,6 +255,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     #print(modelh)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&more=Y&PAGEN_1={i}"
+        print(item_href_categories)
         req = requests.get(url=item_href_categories, headers=headers)
         src = req.text
         soup = BeautifulSoup(src, 'html.parser')
