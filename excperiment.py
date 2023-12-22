@@ -259,11 +259,16 @@ for item_href_categories, number_page in srazy_parsim.items():
         req = requests.get(url=item_href_categories, headers=headers)
         src = req.text
         soup = BeautifulSoup(src, 'html.parser')
-        href_part = soup.find_all("a",target="_blank", class_="brazzers-gallery brazzers-daddy")
+        href_part = soup.find_all("div", class_="add-image")
+        #print(href_part)
         for item in href_part:
-            item = item.get("href")
+            item = str(item)
+            foto = None
+            foto = "https://bamper.by" + item[item.find('"tooltip_" src=') + 16 : item.find('title="Нажми,') -2]
+            item = item[item.find("href")+7: item.find("target=") -2]
+            #print(foto)
             href_to_zapchast = "https://bamper.by/" + item
-            #print(item)
+            print(href_to_zapchast)
             number_href_reverse = item[::-1]
             number_href_reverse_second = number_href_reverse[1:]
             number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
@@ -324,22 +329,13 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(status)
                 #print(order)        
                 #print(info)
-                foto = None
-                
-                image_obj = str(soup.find("img", class_="fotorama__img"))
-                # print(image_obj)
-                foto = "https://bamper.by" + image_obj[image_obj.find("src=")+5 : image_obj.find("style=")-2]
-                #print(foto)
+                #foto = None
+                #print(foto)<div  style="left: 0px;">
                 if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
                     img = requests.get(foto)
                     img_option = open(f"{folder_name}/{name_href}.png", 'wb')
                     img_option.write(img.content)
-                    #img_option.close
-
-                    im = requests.get(foto)
-
-                    with open(f"{folder_name}/{name_href}.png", "wb+") as file:
-                        file.write(im.content)  # Для сохранения на компьютер
+                    img_option.close
                     try:
                         im = Image.open(f"{folder_name}/{name_href}.png")
                         pixels = im.load()  # список с пикселями
@@ -368,7 +364,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
 
                         img = Image.open(f"{folder_name}/{name_href}.png")
-                        print(foto)
+                        #print(foto)
                         #img = Image.open(f"fotku/{name_href}.png")    
                         img.paste(watermark,(-272,-97), watermark)
                         img.paste(watermark,(-230,1), watermark)
@@ -377,8 +373,10 @@ for item_href_categories, number_page in srazy_parsim.items():
                         #os.remove("img.png")
                         #print(f"{name_href} - неверный формат или ерунда")
                     except UnidentifiedImageError:
-                        foto = "Битая фотка"
-                        print("Битая фотка")
+                            foto = "Битая фотка"
+                            print("Битая фотка")
+                            #os.remove(f"{folder_name}/{name_href}.png")
+
                 else:
                     foto = "Нет фотографии"
                     print(name_href , "без фотки")
@@ -458,7 +456,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     )
                 )
                 file.close()
-                os.remove(f"{name_href}.html")
+                #os.remove(f"{name_href}.html")
 
             else:
                 print(href_to_zapchast + " находится в black-list")
