@@ -1,20 +1,17 @@
 import json
-from turtle import pd
-from selenium import webdriver
-from selenium.webdriver.chrome.service import Service
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.common.by import By
 import time
 import requests
 from bs4 import BeautifulSoup
 import os
-import shutil
 import csv
 from PIL import Image, UnidentifiedImageError
 import time
+from selenium import webdriver
+from selenium.webdriver.chrome.service import Service
+import webdriver_manager
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.support.ui import WebDriverWait
 
 
 headers = {
@@ -22,31 +19,11 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 }
 
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-#options.add_experimental_option('useAutomationExtension', False)
-options.add_argument('--ignore-certificate-errors')
-options.add_argument("start-maximized") # // https://stackoverflow.com/a/26283818/1689770
-options.add_argument("enable-automation")#  // https://stackoverflow.com/a/43840128/1689770
-#options.add_argument("--headless")#  // only if you are ACTUALLY running headless
-options.add_argument("--no-sandbox")# //https://stackoverflow.com/a/50725918/1689770
-options.add_argument("--disable-dev-shm-usage")# //https://stackoverflow.com/a/50725918/1689770
-options.add_argument("--disable-browser-side-navigation")# //https://stackoverflow.com/a/49123152/1689770
-options.add_argument("--disable-gpu")
-options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
-options.add_argument("--enable-javascript")
+options = webdriver_manager.ChromeOptions()
+
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
-
-driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
-    'source': '''
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array:
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise:
-        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol:
-    '''
-})
 
 summa = 0
 black_list = []
@@ -67,137 +44,6 @@ while True:
 # закрываем файл
 file1.close
 
-"""file1 = open("black-mark.txt", "r", encoding="utf-8")
-while True:
-    # считываем строку
-    line = file1.readline()
-    line = line.replace("\n","").replace("'","").replace(" ","")
-    # прерываем цикл, если строка пустая
-    if not line:
-        break
-    # выводим строку
-    black_mark.append(line)
-#print(black_list)
-
-# закрываем файл
-file1.close
-
-file1 = open("black-model.txt", "r", encoding="utf-8")
-while True:
-    # считываем строку
-    line = file1.readline()
-    line = line.replace("\n","").replace("'","").replace(" ","")
-    # прерываем цикл, если строка пустая
-    if not line:
-        break
-    # выводим строку
-    black_model.append(line)
-#print(black_list)
-
-url = "https://bamper.by/catalog/modeli/"
-
-req = requests.get(url, headers=headers)
-src = req.text
-#print(src)
-#with open("index.html", "w", encoding="utf-8") as file:
-#    file.write(src)
-#with open("index.html", encoding="utf-8") as file:
-#    src = file.read()
-soup = BeautifulSoup(src, 'html.parser')
-#print(soup)
-marka_need_list = {}
-model_need_list = {}
-
-
-all_mark_models = soup.find_all("h3", class_="title-2")
-#print(all_mark_models)
-for item in all_mark_models:
-    item = str(item)
-    item_text = item[item.find("gray")+6 : item.find("/h3")-6]
-    item_href_marka = "https://bamper.by"+item[item.find("href=")+6 : item.find("style") - 2]
-    #print(item_href_marka, item_text)
-    marka_need_list[item_text] = item_href_marka
-
-model_need_list = {}
-for item_text_marka, item_href_marka in marka_need_list.items():
-    #print(item_text_marka)
-    if item_text_marka not in black_mark:
-        print(item_href_marka)
-        req = requests.get(url=item_href_marka, headers=headers)
-        src = req.text
-        #print(src)
-
-        soup = BeautifulSoup(src, 'html.parser')
-
-        count = soup.find_all("a")
-        for item in count:
-            item = str(item)
-            if "запчасти для <b>" in item:
-                item_text = item[item.find("запчасти для <b>")+16 : item.find("</b> </a>")]
-                #print(item_text)
-                #if item_text not in black_model:
-                item_href_model = "https://bamper.by"+item[item.find("href=")+6 : item.find(">запчасти") - 1]
-                model_need_list[item_text] = item_href_model
-                #print(item_href_model)
-                #print(item_text, item_href_model)
-
-with open("modelu.json", "a", encoding="utf-8") as file:
-    json.dump(model_need_list, file, indent=4, ensure_ascii=False)        
-
-with open('modelu.json', encoding="utf-8") as file:
-    model_need_list = json.load(file)
-
-zapchastu_to_parsing = {}
-all_categories_part = {}
-n=1
-for item_text_model, item_href_model in model_need_list.items():
-    if item_text_model not in black_model:
-        item_text_model = item_text_model.replace("/","_")
-        item_href_model = str(item_href_model)
-        item_href_model = item_href_model[item_href_model.find("catalog/")+8 : len(item_href_model) -1]
-        print(item_href_model)
-        markah = item_href_model[: item_href_model.find("-")]
-        modelh = item_href_model[item_href_model.find("-") + 1 :]
-        
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?more=Y"
-        #print(url_zapchast)
-        driver.get(url=url_zapchast)
-        time.sleep(1)
-
-        with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
-            file.write(driver.page_source)
-
-        with open(f"{item_text_model}.html", encoding="utf-8") as file:
-            src = file.read()
-
-        soup = BeautifulSoup(src, 'html.parser')
-
-        count = soup.find_all("h5", class_="list-title js-var_iCount")
-        #print(count)
-        for item in count:
-            item = str(item)
-            if "<b>" in item:
-                #print(item)
-                num_page = item[item.find("<b>")+3: item.find("</b>")]
-                num_page = int(num_page.replace(" ",""))
-                summa = summa + num_page
-                if num_page > 0 and num_page < 1201:
-                    page = int(num_page / 20) + 1
-                    zapchastu_to_parsing[url_zapchast] = page
-                elif num_page > 1200:
-                    page = int(num_page / 20) + 1
-                    all_categories_part[markah] = modelh    
-                
-        os.remove(f"{item_text_model}.html") 
-
-with open("srazy_parsim.json", "a", encoding="utf-8") as file:
-    json.dump(zapchastu_to_parsing, file, indent=4, ensure_ascii=False)
-
-with open("go_to_catalog.json", "a", encoding="utf-8") as file:
-    json.dump(all_categories_part, file, indent=4, ensure_ascii=False)
-
-print(summa)"""
-
 # Адрес сайта, с которого мы будем получать данные
 url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
     
@@ -213,14 +59,14 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="_fotku_" + time.strftime('%Y-%m-%d')
+folder_name ="0_900_" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
 watermark = Image.open("moe.png")
-with open(f"vse_data_bamper.csv", "w", encoding="utf-8") as file_data:
+with open(f"0_900_data_bamper.csv", "w", encoding="utf-8") as file_data:
     writer = csv.writer(file_data)
 
     writer.writerow(
@@ -244,9 +90,10 @@ with open(f"vse_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("srazy_parsim.json", encoding="utf-8") as file:
+with open("zapchas00_900.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
+zapchast_in_black_list = 0
 for item_href_categories, number_page in srazy_parsim.items():
     item_href_categories = str(item_href_categories)
     markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
@@ -254,7 +101,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/store_")]
     #print(modelh)
     for i in range(1, number_page+1):
-        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&more=Y&PAGEN_1={i}"
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
         print(item_href_categories)
         req = requests.get(url=item_href_categories, headers=headers)
         src = req.text
@@ -432,7 +279,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(volume, fuel, transmission, engine, car_body)
                 #print(benzik)
 
-                file = open(f"vse_data_bamper.csv", "a", encoding="utf-8", newline='')
+                file = open(f"0_900_data_bamper.csv", "a", encoding="utf-8", newline='')
                 writer = csv.writer(file)
 
                 writer.writerow(
@@ -460,7 +307,8 @@ for item_href_categories, number_page in srazy_parsim.items():
 
             else:
                 print(href_to_zapchast + " находится в black-list")
+                zapchast_in_black_list += 1
 
-os.remove("modelu.json")
-
+#os.remove("modelu.json")
+print(zapchast_in_black_list, " - количество запчастей из black-lista поставщиков")
 a = input("Парсинг по  законичил свою работу, нажми 1 и Enter")
