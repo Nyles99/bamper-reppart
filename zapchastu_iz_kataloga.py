@@ -94,7 +94,7 @@ with open(f"{input_model}_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("go_to_catalog.json", encoding="utf-8") as file:
+"""with open("go_to_catalog.json", encoding="utf-8") as file:
     all_categories_part= json.load(file)
 
 all_href_in_categories = {}
@@ -128,15 +128,48 @@ for markah, modelh in all_categories_part.items():
                 all_href_in_categories[href_in_categories] = text_in_categories 
 
 with open("page_with_href_zapchast.json", "a", encoding="utf-8") as file:
-    json.dump(all_href_in_categories, file, indent=4, ensure_ascii=False)
+    json.dump(all_href_in_categories, file, indent=4, ensure_ascii=False)"""
 
 
-"""with open("page with href zapchast.json", encoding="utf-8") as file:
+all_categories_part = {}
+
+with open("page_with_href_zapchast.json", encoding="utf-8") as file:
     all_href_in_categories= json.load(file)
 
+for href_in_categories, text_in_categories in all_href_in_categories.items():
+    
+    #print(href_in_categories)
+    n = 1
+    for i in range (1, 60):
+        if n == 0:
+            break
+        href_in_categories = href_in_categories[:len(href_in_categories)-1] + str(i)
+        
+        req = requests.get(url=href_in_categories, headers=headers)
+        src = req.text
+        soup = BeautifulSoup(src, "lxml")
+        #count = soup.find_all("div", class_="seo1")
+        count = soup.find_all("div", class_="add-image")
+        #print(count)
+        if count == []:
+            n=0
+        else:
+            print(href_in_categories)
+            for item in count:
+                item = str(item)
+                foto = None
+                foto = "https://bamper.by" + item[item.find('"tooltip_" src=') + 16 : item.find('title="Нажми,') -2]
+                item = item[item.find("href")+7: item.find("target=") -2]
+                #print(foto)
+                href_to_zapchast = "https://bamper.by/" + item
+                print(href_to_zapchast)
+                number_href_reverse = item[::-1]
+                number_href_reverse_second = number_href_reverse[1:]
+                number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
+                name_href = number_href_reverse[::-1]
+                print(name_href)
+                num_provider = name_href[: name_href.find("-")]
+                #print(num_provider)"""
+    
 
 
-for item in href_part:
-                    item = str(item)
-                    href_zapchast = item[item.find("zapchast") : item.find('" target=')]
-                    print(href_zapchast)"""
