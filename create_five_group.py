@@ -201,7 +201,7 @@ for item_text_model, item_href_model in model_need_list.items():
                     zapchast9000[markah] = modelh 
         os.remove(f"{item_text_model}.html") 
 
-with open("zapchas00_900.json", "a", encoding="utf-8") as file:
+with open("zapchast00_900.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_900, file, indent=4, ensure_ascii=False)
 
 with open("zapchast900_1200.json", "a", encoding="utf-8") as file:

@@ -37,7 +37,7 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
 
-options = webdriver_manager.ChromeOptions()
+options = webdriver.ChromeOptions()
 
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")

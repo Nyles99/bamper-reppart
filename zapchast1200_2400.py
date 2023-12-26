@@ -19,7 +19,7 @@ headers = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 }
 
-options = webdriver_manager.ChromeOptions()
+options = webdriver.ChromeOptions()
 
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
@@ -90,7 +90,7 @@ with open(f"1200_2400_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("zapchas1200_2400.json", encoding="utf-8") as file:
+with open("zapchast1200_2400.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 zapchast_in_black_list = 0

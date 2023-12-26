@@ -90,7 +90,7 @@ with open(f"900_1200_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("zapchas900_1200.json", encoding="utf-8") as file:
+with open("zapchast900_1200.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 zapchast_in_black_list = 0

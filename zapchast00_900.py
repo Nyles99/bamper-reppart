@@ -90,7 +90,7 @@ with open(f"0_900_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("zapchas00_900.json", encoding="utf-8") as file:
+with open("zapchast00_900.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 zapchast_in_black_list = 0
@@ -102,12 +102,12 @@ for item_href_categories, number_page in srazy_parsim.items():
     #print(modelh)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
-        print(item_href_categories)
+        #print(item_href_categories)
         req = requests.get(url=item_href_categories, headers=headers)
         src = req.text
         soup = BeautifulSoup(src, 'html.parser')
         href_part = soup.find_all("div", class_="add-image")
-        #print(href_part)
+        print(href_part)
         for item in href_part:
             item = str(item)
             foto = None
