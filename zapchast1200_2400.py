@@ -20,7 +20,10 @@ headers = {
 }
 
 options = webdriver.ChromeOptions()
-
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+#options.add_experimental_option('useAutomationExtension', False)
+options.add_argument('--ignore-certificate-errors')
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)

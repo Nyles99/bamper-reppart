@@ -38,7 +38,10 @@ usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
 
 options = webdriver.ChromeOptions()
-
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+#options.add_experimental_option('useAutomationExtension', False)
+options.add_argument('--ignore-certificate-errors')
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -101,7 +104,7 @@ with open(f"zapchast2400_9000_data_bamper.csv", "w", encoding="utf-8") as file_d
         )
     )
 
-with open("zapchast2400_9000.json", encoding="utf-8") as file:
+"""with open("zapchast2400_9000.json", encoding="utf-8") as file:
     all_categories_part= json.load(file)
 
 all_href_in_categories = {}
@@ -135,7 +138,7 @@ for markah, modelh in all_categories_part.items():
                 all_href_in_categories[href_in_categories] = text_in_categories 
 
 with open("page_with_href_zapchast.json", "a", encoding="utf-8") as file:
-    json.dump(all_href_in_categories, file, indent=4, ensure_ascii=False)
+    json.dump(all_href_in_categories, file, indent=4, ensure_ascii=False)"""
 
 
 all_categories_part = {}
@@ -176,7 +179,7 @@ for href_in_categories, text_in_categories in all_href_in_categories.items():
                 name_href = number_href_reverse[::-1]
                 print(name_href)
                 num_provider = name_href[: name_href.find("-")]
-                #print(num_provider)"""
+                #print(num_provider)
                 if num_provider not in black_list:
                     if requests.get(href_to_zapchast).status_code != 200:
                         while (requests.get(href_to_zapchast).status_code != 200):

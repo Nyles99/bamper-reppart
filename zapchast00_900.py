@@ -20,7 +20,10 @@ headers = {
 }
 
 options = webdriver.ChromeOptions()
-
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+#options.add_experimental_option('useAutomationExtension', False)
+options.add_argument('--ignore-certificate-errors')
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -102,12 +105,12 @@ for item_href_categories, number_page in srazy_parsim.items():
     #print(modelh)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
-        #print(item_href_categories)
+        print(item_href_categories)
         req = requests.get(url=item_href_categories, headers=headers)
         src = req.text
         soup = BeautifulSoup(src, 'html.parser')
         href_part = soup.find_all("div", class_="add-image")
-        print(href_part)
+        #print(href_part)
         for item in href_part:
             item = str(item)
             foto = None

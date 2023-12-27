@@ -38,7 +38,10 @@ usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
 
 options = webdriver.ChromeOptions()
-
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+#options.add_experimental_option('useAutomationExtension', False)
+options.add_argument('--ignore-certificate-errors')
 
 #options.add_argument("--proxy-server=31.204.2.182:9142")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
@@ -136,7 +139,7 @@ for markah, modelh in all_categories_part.items():
 
 with open("page_with_href_zapchast.json", "a", encoding="utf-8") as file:
     json.dump(all_href_in_categories, file, indent=4, ensure_ascii=False)
-
+time.sleep(10)
 
 all_categories_part = {}
 zapchast_in_black_list = 1
