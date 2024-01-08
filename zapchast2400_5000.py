@@ -362,10 +362,14 @@ for href_in_categories, text_in_categories in all_href_in_categories.items():
                     )
                     file.close()
                     #os.remove(f"{name_href}.html")
+                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                        print('report: ', report)
 
                 else:
                     print(href_to_zapchast + " находится в black-list")
                     zapchast_in_black_list += 1
+                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                        print('report: ', report)
 
 #os.remove("modelu.json")
 print(zapchast_in_black_list, " - количество запчастей из black-lista поставщиков")

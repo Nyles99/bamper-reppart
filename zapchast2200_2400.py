@@ -308,10 +308,14 @@ for item_href_categories, number_page in srazy_parsim.items():
                 )
                 file.close()
                 #os.remove(f"{name_href}.html")
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
             else:
                 print(href_to_zapchast + " находится в black-list")
                 zapchast_in_black_list += 1
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
     for i in range(1, int(number_page) - 59):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&sort=PRICE-DESC&more=Y&PAGEN_1={i}"
@@ -517,10 +521,14 @@ for item_href_categories, number_page in srazy_parsim.items():
                 )
                 file.close()
                 #os.remove(f"{name_href}.html")
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
             else:
                 print(href_to_zapchast + " находится в black-list")
                 zapchast_in_black_list += 1
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
 #os.remove("modelu.json")
 print(zapchast_in_black_list, " - количество запчастей из black-lista поставщиков")

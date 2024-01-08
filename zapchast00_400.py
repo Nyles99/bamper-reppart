@@ -308,10 +308,14 @@ for item_href_categories, number_page in srazy_parsim.items():
                 )
                 file.close()
                 #os.remove(f"{name_href}.html")
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
             else:
                 print(href_to_zapchast + " находится в black-list")
                 zapchast_in_black_list += 1
+                with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    print('report: ', report)
 
 #os.remove("modelu.json")
 print(zapchast_in_black_list, " - количество запчастей из black-lista поставщиков")

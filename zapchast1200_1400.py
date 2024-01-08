@@ -62,14 +62,14 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="1200_1600" + time.strftime('%Y-%m-%d')
+folder_name ="1200_1400" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
 watermark = Image.open("moe.png")
-with open(f"1200_1600_data_bamper.csv", "w", encoding="utf-8") as file_data:
+with open(f"1200_1400_data_bamper.csv", "w", encoding="utf-8") as file_data:
     writer = csv.writer(file_data)
 
     writer.writerow(
@@ -93,7 +93,7 @@ with open(f"1200_1600_data_bamper.csv", "w", encoding="utf-8") as file_data:
         )
     )
 
-with open("zapchast1200_1600.json", encoding="utf-8") as file:
+with open("zapchast1200_1400.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 zapchast_in_black_list = 0
@@ -283,7 +283,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(volume, fuel, transmission, engine, car_body)
                 #print(benzik)
 
-                file = open(f"1200_1600_data_bamper.csv", "a", encoding="utf-8", newline='')
+                file = open(f"1200_1400_data_bamper.csv", "a", encoding="utf-8", newline='')
                 writer = csv.writer(file)
 
                 writer.writerow(
@@ -496,7 +496,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(volume, fuel, transmission, engine, car_body)
                 #print(benzik)
 
-                file = open(f"1200_1600_data_bamper.csv", "a", encoding="utf-8", newline='')
+                file = open(f"1200_1400_data_bamper.csv", "a", encoding="utf-8", newline='')
                 writer = csv.writer(file)
 
                 writer.writerow(

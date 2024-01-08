@@ -167,7 +167,8 @@ zapchast13000_14000 = {}
 zapchast14000 = {}
 zapchast900_1050 = {}
 zapchast1050_1200 = {}
-zapchast1200_1600 = {}
+zapchast1200_1400 = {}
+zapchast1400_1600 = {}
 zapchast1600_1700 = {}
 zapchast1700_1900 = {}
 zapchast1900_2000 = {}
@@ -226,9 +227,12 @@ for item_text_model, item_href_model in model_need_list.items():
                 elif num_page > 1050 and num_page < 1201:
                     page = int(num_page / 20) + 1
                     zapchast1050_1200[url_zapchast] = page
-                elif num_page > 1200 and num_page < 1601:
+                elif num_page > 1200 and num_page < 1401:
                     page = int(num_page / 20) + 1
-                    zapchast1200_1600[url_zapchast] = page
+                    zapchast1200_1400[url_zapchast] = page
+                elif num_page > 1400 and num_page < 1601:
+                    page = int(num_page / 20) + 1
+                    zapchast1400_1600[url_zapchast] = page
                 elif num_page > 1600 and num_page < 1701:
                     page = int(num_page / 20) + 1
                     zapchast1600_1700[url_zapchast] = page
@@ -306,8 +310,11 @@ with open("zapchast900_1050.json", "a", encoding="utf-8") as file:
 with open("zapchast1050_1200.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1050_1200, file, indent=4, ensure_ascii=False)
 
-with open("zapchast1200_1600.json", "a", encoding="utf-8") as file:
-    json.dump(zapchast1200_1600, file, indent=4, ensure_ascii=False)
+with open("zapchast1200_1400.json", "a", encoding="utf-8") as file:
+    json.dump(zapchast1200_1400, file, indent=4, ensure_ascii=False)
+
+with open("zapchast1400_1600.json", "a", encoding="utf-8") as file:
+    json.dump(zapchast1400_1600, file, indent=4, ensure_ascii=False)
 
 with open("zapchast1600_1700.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1600_1700, file, indent=4, ensure_ascii=False)
