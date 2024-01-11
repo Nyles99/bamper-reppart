@@ -110,9 +110,10 @@ for item_href_categories, count_page in srazy_parsim.items():
     #print(markah)
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     print(markah, modelh)
-    for year in range(2012,2024):
-
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{year}-{year}/price-ot_70/store_Y/?more=Y"
+    for m in range(1,3):
+        year_in = 2006 + 6 * m
+        year_out = 2012 + 6 * m
+        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{year_in}-{year_out}/price-ot_70/store_Y/?more=Y"
         #print(url_zapchast)
         driver.get(url=url_zapchast)
         time.sleep(1)
@@ -143,11 +144,11 @@ for item_href_categories, count_page in srazy_parsim.items():
 
         os.remove(f"{count_page}.html") 
 
-    with open("zapchast00_1200_year.json", "a", encoding="utf-8") as file:
-        json.dump(zapchast00_1200_year, file, indent=4, ensure_ascii=False)
+with open("zapchast00_1200_year.json", "a", encoding="utf-8") as file:
+    json.dump(zapchast00_1200_year, file, indent=4, ensure_ascii=False)
 
-    with open("zapchast1200_year.json", "a", encoding="utf-8") as file:
-        json.dump(zapchast1200_year, file, indent=4, ensure_ascii=False)
+with open("zapchast1200_year.json", "a", encoding="utf-8") as file:
+    json.dump(zapchast1200_year, file, indent=4, ensure_ascii=False)
 
 
 print(summa)

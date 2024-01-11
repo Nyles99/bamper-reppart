@@ -57,17 +57,17 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="00_1200_" + time.strftime('%Y-%m-%d')
+folder_name ="00_1200_year" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
 watermark = Image.open("moe.png")
-if os.path.exists(f"00_1200_data_bamper.csv"):
+if os.path.exists(f"00_1200_year_data_bamper.csv"):
     print("Папка уже есть")
 else:
-    with open(f"00_1200_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_year_data_bamper.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
@@ -91,7 +91,7 @@ else:
             )
         )
 
-with open("zapchast00_1200.json", encoding="utf-8") as file:
+with open("zapchast00_1200_year.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 nomer_str = 0
 zapchast_in_black_list = 0
@@ -101,9 +101,10 @@ for item_href_categories, number_page in srazy_parsim.items():
     markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
     #print(markah)
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
-    #print(modelh)
+    diapazon = item_href_categories[item_href_categories.find("god_")+4:item_href_categories.find("/price-ot_70/sto")]
+    print(modelh, diapazon)
     for i in range(1, number_page+1):
-        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
         nomer_str += 1
         print(f'Номер страницы {nomer_str} - Внимательно')
         print(item_href_categories)
@@ -283,7 +284,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #print(volume, fuel, transmission, engine, car_body)
                     #print(benzik)
 
-                    file = open(f"00_1200_data_bamper.csv", "a", encoding="utf-8", newline='')
+                    file = open(f"00_1200_year_data_bamper.csv", "a", encoding="utf-8", newline='')
                     writer = csv.writer(file)
 
                     writer.writerow(
