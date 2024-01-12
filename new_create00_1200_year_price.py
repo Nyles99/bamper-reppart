@@ -13,20 +13,15 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-page = input("Введи 1, если парсим с самого начала, если нет, последний номер")
+
+input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
+
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64; X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 }
-options = webdriver.ChromeOptions()
-options.add_argument("--disable-blink-features=AutomationControlled")
-options.add_experimental_option('excludeSwitches', ['enable-logging'])
-#options.add_experimental_option('useAutomationExtension', False)
-options.add_argument('--ignore-certificate-errors')
 
-#options.add_argument("--proxy-server=31.204.2.182:9142")
-driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 summa = 0
 black_list = []
@@ -62,16 +57,17 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="00_400_" + time.strftime('%Y-%m-%d')
+folder_name ="00_1200_year" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
-if os.path.exists(f"00_400_data_bamper.csv"):
-    print("Файл уже есть")
+watermark = Image.open("moe.png")
+if os.path.exists(f"00_1200_year_data_bamper.csv"):
+    print("Папка уже есть")
 else:
-    with open(f"00_400_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_year_data_bamper.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
@@ -95,23 +91,24 @@ else:
             )
         )
 
-with open("zapchast00_400.json", encoding="utf-8") as file:
+with open("zapchast00_1200_year.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
-nomer = 1
+nomer_str = 0
 zapchast_in_black_list = 0
 for item_href_categories, number_page in srazy_parsim.items():
-    if page <= nomer:
-        item_href_categories = str(item_href_categories)
-        markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
-        print(markah)
-        modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/store_")]
-        print(modelh)
-        year = item_href_categories[item_href_categories.find("god")+4:item_href_categories.find("/god_")+8]
-        print(year)
-        for i in range(1, number_page+1):
-            item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{year}-{year}/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_{year}-{year}%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
-            print(nomer, item_href_categories)
-            nomer += 1
+    
+    item_href_categories = str(item_href_categories)
+    markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
+    #print(markah)
+    modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
+    diapazon = item_href_categories[item_href_categories.find("god_")+4:item_href_categories.find("/price-ot_70/sto")]
+    print(modelh, diapazon)
+    for i in range(1, number_page+1):
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
+        nomer_str += 1
+        print(f'Номер страницы {nomer_str} - Внимательно')
+        print(item_href_categories)
+        if nomer_str >= input_page:
             req = requests.get(url=item_href_categories, headers=headers)
             src = req.text
             soup = BeautifulSoup(src, 'html.parser')
@@ -134,9 +131,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 num_provider = name_href[: name_href.find("-")]
                 #print(num_provider)
                 if num_provider not in black_list:
-                    if requests.get(href_to_zapchast).status_code != 200:
-                        while (requests.get(href_to_zapchast).status_code != 200):
-                            driver.get(href_to_zapchast)
+                    
                     req = requests.get(url=href_to_zapchast, headers=headers)
                     src = req.text
 
@@ -156,6 +151,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                         model_and_year = string[number_b+8 :]
                         marka = model_and_year[: model_and_year.find(" ")]
                         model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
+                        year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
                         
 
                     artical_obj = soup.find_all("span", class_="data-type f13")
@@ -187,7 +183,55 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #print(info)
                     #foto = None
                     #print(foto)<div  style="left: 0px;">
-                    
+                    if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
+                        img = requests.get(foto)
+                        img_option = open(f"{folder_name}/{name_href}.png", 'wb')
+                        img_option.write(img.content)
+                        img_option.close
+                        try:
+                            im = Image.open(f"{folder_name}/{name_href}.png")
+                            pixels = im.load()  # список с пикселями
+                            x, y = im.size  # ширина (x) и высота (y) изображения
+                            min_line_white = []
+                            n=0
+                            for j in range(y):
+                                white_pix = 0
+                
+                                for m in range(x):
+                                    # проверка чисто белых пикселей, для оттенков нужно использовать диапазоны
+                                    if pixels[m, j] == (248,248,248):         # pixels[i, j][q] > 240  # для оттенков
+                                        white_pix += 1
+                                if white_pix == x:
+                                    n += 1
+                                #print(white_pix, x, n)
+
+                                #print(white_pix)
+                                min_line_white.append(white_pix)
+                            left_border = int(min(min_line_white)/2)
+                            #print(left_border)
+                            im.crop(((left_border+15), n/2+20, (x-left_border-20), y-(n/2)-20)).save(f"{folder_name}/{name_href}.png", quality=95)
+
+
+
+
+
+                            img = Image.open(f"{folder_name}/{name_href}.png")
+                            #print(foto)
+                            #img = Image.open(f"fotku/{name_href}.png")    
+                            img.paste(watermark,(-272,-97), watermark)
+                            img.paste(watermark,(-230,1), watermark)
+                            img.save(f"{folder_name}/{name_href}.png", format="png")
+                            img_option.close
+                            #os.remove("img.png")
+                            #print(f"{name_href} - неверный формат или ерунда")
+                        except UnidentifiedImageError:
+                                foto = "Битая фотка"
+                                print("Битая фотка")
+                                #os.remove(f"{folder_name}/{name_href}.png")
+
+                    else:
+                        foto = "Нет фотографии"
+                        print(name_href , "без фотки")
                             
                     benzik_obj = soup.find_all("div", style="font-size: 17px;")
                     fuel = None
@@ -240,7 +284,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #print(volume, fuel, transmission, engine, car_body)
                     #print(benzik)
 
-                    file = open(f"00_400_data_bamper.csv", "a", encoding="utf-8", newline='')
+                    file = open(f"00_1200_year_data_bamper.csv", "a", encoding="utf-8", newline='')
                     writer = csv.writer(file)
 
                     writer.writerow(
@@ -269,11 +313,12 @@ for item_href_categories, number_page in srazy_parsim.items():
                         print('report: ', report)
 
                 else:
-                    print(href_to_zapchast + " находится в black-list")
+                    print(href_to_zapchast + " находится в black-list, уже "+ str(zapchast_in_black_list) )
                     zapchast_in_black_list += 1
                     with requests.request("POST", href_to_zapchast, headers=headers) as report:
                         print('report: ', report)
-
+        else:
+            nomer_str += 1
 #os.remove("modelu.json")
-print(zapchast_in_black_list, " - количество запчастей из black-lista поставщиков")
+
 a = input("Парсинг по  законичил свою работу, нажми 1 и Enter")
