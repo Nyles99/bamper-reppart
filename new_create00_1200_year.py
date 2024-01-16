@@ -13,8 +13,42 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-
+# proxies = {'https': 'http://user148177:nho68y@158.46.251.213:8067/'}
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
+
+options = webdriver.ChromeOptions()
+options.add_argument("--disable-blink-features=AutomationControlled")
+options.add_experimental_option('excludeSwitches', ['enable-logging'])
+#options.add_experimental_option('useAutomationExtension', False)
+options.add_argument('--ignore-certificate-errors')
+options.add_argument("start-maximized") # // https://stackoverflow.com/a/26283818/1689770
+options.add_argument("enable-automation")#  // https://stackoverflow.com/a/43840128/1689770
+#options.add_argument("--headless")#  // only if you are ACTUALLY running headless
+options.add_argument("--no-sandbox")# //https://stackoverflow.com/a/50725918/1689770
+options.add_argument("--disable-dev-shm-usage")# //https://stackoverflow.com/a/50725918/1689770
+options.add_argument("--disable-browser-side-navigation")# //https://stackoverflow.com/a/49123152/1689770
+options.add_argument("--disable-gpu")
+options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
+options.add_argument("--enable-javascript")
+
+options.add_argument("--proxy-server=158.46.251.213:8067")
+
+#proxy_options = {
+#    "proxy": {
+#        "https": f"http://user148177:nho68y@158.46.251.213:8067"
+#    }
+#}
+driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options,)
+
+driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
+    'source': '''
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Array:
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Promise:
+        delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol:
+    '''
+})
+
+
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
@@ -44,7 +78,7 @@ file1.close
 
 # Адрес сайта, с которого мы будем получать данные
 url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
-    
+ 
 # Получаем содержимое страницы
 response = requests.get(url_byn)
     
@@ -108,9 +142,22 @@ for item_href_categories, number_page in srazy_parsim.items():
         nomer_str += 1
         print(f'Номер страницы {nomer_str} - Внимательно')
         print(item_href_categories)
+        p = 1
         if nomer_str >= input_page:
-            req = requests.get(url=item_href_categories, headers=headers)
-            src = req.text
+            #req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
+            #src = req.text
+            driver.get(url=item_href_categories)
+            if p == 1:
+                time.sleep(30)
+                p = 2
+
+            time.sleep(1)
+
+            with open(f"{number_page}.html", "w", encoding="utf-8") as file:
+                file.write(driver.page_source)
+
+            with open(f"{number_page}.html", encoding="utf-8") as file:
+                src = file.read()
             soup = BeautifulSoup(src, 'html.parser')
             href_part = soup.find_all("div", class_="add-image")
             #print(href_part)
@@ -132,8 +179,14 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(num_provider)
                 if num_provider not in black_list:
                     
-                    req = requests.get(url=href_to_zapchast, headers=headers)
-                    src = req.text
+                    driver.get(url=item_href_categories)
+                    time.sleep(1)
+
+                    with open(f"{num_provider}.html", "w", encoding="utf-8") as file:
+                        file.write(driver.page_source)
+
+                    with open(f"{num_provider}.html", encoding="utf-8") as file:
+                        src = file.read()
 
                     soup = BeautifulSoup(src, 'html.parser')
                     price_obj = soup.find_all("meta", itemprop="price")
@@ -308,15 +361,17 @@ for item_href_categories, number_page in srazy_parsim.items():
                         )
                     )
                     file.close()
-                    #os.remove(f"{name_href}.html")
-                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
-                        print('report: ', report)
+                    os.remove(f"{num_provider}.html")
+                    #with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
+                    #    print('report: ', report)
 
                 else:
                     print(href_to_zapchast + " находится в black-list, уже "+ str(zapchast_in_black_list) )
                     zapchast_in_black_list += 1
-                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
-                        print('report: ', report)
+                    #os.remove(f"{number_page}.html")
+                    #with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
+                    #    print('report: ', report)
+            os.remove(f"{number_page}.html")
         else:
             nomer_str += 1
 #os.remove("modelu.json")
