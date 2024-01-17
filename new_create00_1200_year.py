@@ -320,7 +320,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #os.remove(f"{number_page}.html")
                     with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                         print('report: ', report)
-            os.remove(f"{number_page}.html")
+            #os.remove(f"{number_page}.html")
         else:
             nomer_str += 1
 #os.remove("modelu.json")
