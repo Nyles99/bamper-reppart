@@ -110,7 +110,7 @@ for item_href_categories, number_page in srazy_parsim.items():
         print(item_href_categories)
         p = 1
         if nomer_str >= input_page:
-            req = requests.get(url=item_href_categories, headers=headers,)
+            req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
             src = req.text
             
             soup = BeautifulSoup(src, 'html.parser')
@@ -134,7 +134,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(num_provider)
                 if num_provider not in black_list:
                     
-                    req = requests.get(url=href_to_zapchast, headers=headers)
+                    req = requests.get(url=href_to_zapchast, headers=headers, proxies=proxies)
                     src = req.text
 
                     soup = BeautifulSoup(src, 'html.parser')
@@ -186,7 +186,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #foto = None
                     #print(foto)<div  style="left: 0px;">
                     if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
-                        img = requests.get(foto)
+                        img = requests.get(foto, proxies=proxies)
                         img_option = open(f"{folder_name}/{name_href}.png", 'wb')
                         img_option.write(img.content)
                         img_option.close
