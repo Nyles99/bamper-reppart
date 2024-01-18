@@ -88,6 +88,7 @@ else:
                 "ЦЕНА",
                 "НОВАЯ",
                 "ФОТО",
+                "СТРАНИЦА окончания",
             )
         )
 
@@ -307,7 +308,8 @@ for item_href_categories, number_page in srazy_parsim.items():
                             order,
                             price,
                             status,
-                            foto
+                            foto,
+                            nomer_str
                         )
                     )
                     file.close()
