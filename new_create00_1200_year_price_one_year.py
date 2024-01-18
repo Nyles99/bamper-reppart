@@ -67,7 +67,7 @@ watermark = Image.open("moe.png")
 if os.path.exists(f"00_1200_year_price_one_year_data_bamper.csv"):
     print("Папка уже есть")
 else:
-    with open(f"00_1200_year__price_one_year_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_year_price_one_year_data_bamper.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
@@ -152,7 +152,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                         string = all_title_name[all_title_name.find("<b>") + 1 : ]
                         number_b = string.find('</b>')
                         name_part = string[2:number_b]
-                        model_and_year = string[number_b+8 :]
+                        model_and_year = string[string.find(' к ')+3 :]
                         marka = model_and_year[: model_and_year.find(" ")]
                         model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
                         year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
@@ -171,7 +171,8 @@ for item_href_categories, number_page in srazy_parsim.items():
                     info = None
                     info_obj = soup.find_all("span", class_="media-heading cut-h-375")
                     for item_info in info_obj:
-                        info = item_info.text.replace("  ","").replace("\n","")
+                        info = str(item_info.text.replace("  ","").replace("\n",""))
+                        info = info.replace(","," ")
                         info_lower = info.lower()
                         if "ПОД ЗАКАЗ" in info:
                             order = "ПОД ЗАКАЗ"
