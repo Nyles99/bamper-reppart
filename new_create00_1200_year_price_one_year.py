@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-
+proxies = {'https': 'http://user148177:nho68y@158.46.250.241:8938'}
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -112,7 +112,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
         
         if nomer_str >= input_page:
-            req = requests.get(url=item_href_categories, headers=headers)
+            req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
             src = req.text
             soup = BeautifulSoup(src, 'html.parser')
             href_part = soup.find_all("div", class_="add-image")
@@ -135,7 +135,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(num_provider)
                 if num_provider not in black_list:
                     
-                    req = requests.get(url=href_to_zapchast, headers=headers)
+                    req = requests.get(url=href_to_zapchast, headers=headers, proxies=proxies)
                     src = req.text
 
                     soup = BeautifulSoup(src, 'html.parser')
@@ -187,7 +187,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                     #foto = None
                     #print(foto)<div  style="left: 0px;">
                     if foto != "https://bamper.by/local/templates/bsclassified/images/nophoto_car.png":
-                        img = requests.get(foto)
+                        img = requests.get(foto, proxies=proxies)
                         img_option = open(f"{folder_name}/{name_href}.png", 'wb')
                         img_option.write(img.content)
                         img_option.close
@@ -312,13 +312,13 @@ for item_href_categories, number_page in srazy_parsim.items():
                     )
                     file.close()
                     #os.remove(f"{name_href}.html")
-                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                         print('report: ', report)
 
                 else:
                     print(href_to_zapchast + " находится в black-list, уже "+ str(zapchast_in_black_list) )
                     zapchast_in_black_list += 1
-                    with requests.request("POST", href_to_zapchast, headers=headers) as report:
+                    with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                         print('report: ', report)
         else:
             nomer_str += 1
