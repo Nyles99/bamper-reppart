@@ -6,6 +6,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
+from selenium.webdriver.support.ui import Select
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 import time
@@ -72,11 +73,14 @@ for item in all_mark_models:
 
         driver.get(url=url)
         time.sleep(5)
-        marka_input = driver.find_element(By.CLASS_NAME, "select2-search__field")
-        marka_input.clear()
+        driver = webdriver.Chrome()
+        driver.get(url=url)
+        #WebDriverWait(driver, 90).until(EC.visibility_of_element_located((By.NAME, "filterCarManufacturer[]")))
+        marka_input = driver.find_element(By.XPATH('//*["contains(@name, filterCarManufacturer[]") and contains(string(), 'Acura')]')
+        //*[contains(@class, 'point_info') and contains(string(), 'Краснодар')]
+        #marka_input.clear()
         marka_input.send_keys(marka)
-        marka_input.send_keys(Keys.ENTER)
-        time.sleep(5)
+        #marka_input.send_keys(Keys.ENTER)+ime.sleep(5)
 #<input class="select2-search__field" type="search" tabindex="0" autocomplete="off" autocorrect="off" autocapitalize="none" spellcheck="false" role="textbox">
 driver.close()
 driver.quit(0)

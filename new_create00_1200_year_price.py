@@ -76,6 +76,7 @@ else:
                 "МАРКА",
                 "МОДЕЛЬ",
                 "ГОД",
+                "НОМЕР ЗАПЧАСТИ",
                 "ССЫЛКА НА ЗАПЧАСТЬ",
                 "ТОПЛИВО",
                 "ОБЪЕМ",
@@ -88,7 +89,7 @@ else:
                 "ЦЕНА",
                 "НОВАЯ",
                 "ФОТО",
-                "СТРАНИЦА окончания",
+                "СТРАНИЦА ОКОНЧАНИЯ",
             )
         )
 
@@ -156,7 +157,13 @@ for item_href_categories, number_page in srazy_parsim.items():
                         marka = model_and_year[: model_and_year.find(" ")]
                         model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
                         year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
-                        
+
+                    num_zap = " "
+                    num_obj = soup.find_all("span", class_="media-heading cut-h-65")
+                    for item_num in num_obj:
+                        num_zap = str(item_num.text)
+                        num_zap = num_zap.replace("  ","").replace("\n","")
+                    print(num_zap)    
 
                     artical_obj = soup.find_all("span", class_="data-type f13")
                     for item_artical in artical_obj:
@@ -219,7 +226,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
 
 
-
+                            foto = "http://95.163.237.225/"+ name_href + ".png"
                             img = Image.open(f"{folder_name}/{name_href}.png")
                             #print(foto)
                             #img = Image.open(f"fotku/{name_href}.png")    
@@ -230,12 +237,12 @@ for item_href_categories, number_page in srazy_parsim.items():
                             #os.remove("img.png")
                             #print(f"{name_href} - неверный формат или ерунда")
                         except UnidentifiedImageError:
-                                foto = "Битая фотка"
+                                foto = " "
                                 print("Битая фотка")
                                 #os.remove(f"{folder_name}/{name_href}.png")
 
                     else:
-                        foto = "Нет фотографии"
+                        foto = " "
                         print(name_href , "без фотки")
                             
                     benzik_obj = soup.find_all("div", style="font-size: 17px;")
@@ -298,6 +305,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             marka,
                             model,
                             year,
+                            num_zap,
                             href_to_zapchast,
                             fuel,
                             volume,
