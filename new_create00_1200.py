@@ -241,7 +241,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                                             #os.remove(f"{folder_name}/{name_href}.png")
                                 except Exception:
                                     print("Какая-то хуйня с ссылкой на фотографию")
-                                    foto = " ,"
+                                    foto = " "
                             else:
                                 foto = " "
                                 print(name_href , "без фотки")
