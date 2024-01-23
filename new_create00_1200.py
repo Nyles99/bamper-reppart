@@ -118,7 +118,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                 #print(href_part)
                 for item in href_part:
                     item = str(item)
-                    foto = None
+                    foto = " "
                     foto = "https://bamper.by" + item[item.find('"tooltip_" src=') + 16 : item.find('title="Нажми,') -2]
                     item = item[item.find("href")+7: item.find("target=") -2]
                     #print(foto)
@@ -171,9 +171,9 @@ for item_href_categories, number_page in srazy_parsim.items():
                             #print(marka, model, year, price, number_href)
 
                                         
-                            order = None
+                            order = " "
                             status = "Б/у"
-                            info = None
+                            info = " "
                             info_obj = soup.find_all("span", class_="media-heading cut-h-375")
                             for item_info in info_obj:
                                 info = str(item_info.text.replace("  ","").replace("\n",""))
@@ -247,12 +247,12 @@ for item_href_categories, number_page in srazy_parsim.items():
                                 print(name_href , "без фотки")
                                     
                             benzik_obj = soup.find_all("div", style="font-size: 17px;")
-                            fuel = None
+                            fuel = " "
                             transmission = " "
                             engine = " "
-                            volume = None
+                            volume = " "
                             
-                            car_body = None
+                            car_body = " "
                             # print(benzik_obj)
 
 
