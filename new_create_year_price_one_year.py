@@ -74,10 +74,10 @@ for item_href_categories, count_page in srazy_parsim.items():
         driver.get(url=url_zapchast)
         time.sleep(1)
 
-        with open(f"{count_page}.html", "w", encoding="utf-8") as file:
+        with open("excample.html", "w", encoding="utf-8") as file:
             file.write(driver.page_source)
 
-        with open(f"{count_page}.html", encoding="utf-8") as file:
+        with open("excample.html", encoding="utf-8") as file:
             src = file.read()
 
         soup = BeautifulSoup(src, 'html.parser')
@@ -99,7 +99,7 @@ for item_href_categories, count_page in srazy_parsim.items():
                     page = int(num_page / 20) + 1
                     zapchast1200_year_price_one_year[url_zapchast] = page
 
-        os.remove(f"{count_page}.html") 
+        os.remove("excample.html") 
 
 with open("zapchast00_1200_year_price_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200_year_price_one_year, file, indent=4, ensure_ascii=False)
