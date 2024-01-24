@@ -54,7 +54,7 @@ summa = 0
 
 zapchast00_1200_year_price_one_year = {}
 zapchast1200_year_price_one_year = {}
-n=1
+null_or_xz = {}
 
 with open("zapchast1200_year_price.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
@@ -83,6 +83,9 @@ for item_href_categories, count_page in srazy_parsim.items():
         soup = BeautifulSoup(src, 'html.parser')
 
         count = soup.find_all("h5", class_="list-title js-var_iCount")
+        if count == []:
+            null_or_xz[url_zapchast] = year
+            print("Добавлена в отдельный список")
         #print(count)
         for item in count:
             item = str(item)
@@ -95,7 +98,7 @@ for item_href_categories, count_page in srazy_parsim.items():
                 if num_page > 0 and num_page < 1201:
                     page = int(num_page / 20) + 1
                     zapchast00_1200_year_price_one_year[url_zapchast] = page
-                else:
+                elif num_page > 1200:
                     page = int(num_page / 20) + 1
                     zapchast1200_year_price_one_year[url_zapchast] = page
 
@@ -106,6 +109,9 @@ with open("zapchast00_1200_year_price_one_year.json", "a", encoding="utf-8") as 
 
 with open("zapchast1200_year_price_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1200_year_price_one_year, file, indent=4, ensure_ascii=False)
+
+with open("null.json", "a", encoding="utf-8") as file:
+    json.dump(null_or_xz, file, indent=4, ensure_ascii=False)
 
 
 print(summa)

@@ -185,7 +185,7 @@ for item_text_model, item_href_model in model_need_list.items():
                 if num_page > 0 and num_page < 1201:
                     page = int(num_page / 20) + 1
                     zapchast00_1200[url_zapchast] = page
-                else:
+                elif num_page > 1200:
                     page = int(num_page / 20) + 1
                     zapchast1200[url_zapchast] = page
 
