@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-proxies = {'https': 'http://user148177:nho68y@158.46.250.161:8938'}
+proxies = {'https': 'http://user148177:nho68y@158.46.250.241:8938'}
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True

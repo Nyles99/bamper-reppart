@@ -13,7 +13,7 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-proxies = {'https': 'http://user148177:nho68y@185.81.146.82:8938'}
+proxies = {'https': 'http://user148177:nho68y@185.81.146.244:6221'}
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -67,7 +67,7 @@ watermark = Image.open("moe.png")
 if os.path.exists(f"00_1200_year_price_data_bamper.csv"):
     print("Папка уже есть")
 else:
-    with open(f"00_1200_year__price_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_year_price_data_bamper.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
