@@ -17,7 +17,7 @@ proxies = {
     'http': 'http://ZKrvjACdvWKt3Y:Nylesszpg@45.8.125.144:54221',
     'https': 'http://ZKrvjACdvWKt3Y:Nylesszpg@45.8.125.144:54221'
 }
-input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
+input_page = int(input("С какой страницы продолжим?Если сначала - вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
