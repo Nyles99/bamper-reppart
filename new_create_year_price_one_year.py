@@ -60,49 +60,50 @@ with open("zapchast1200_year_price.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 for item_href_categories, count_page in srazy_parsim.items():
-    href_zapchast = []
-    item_href_categories = str(item_href_categories)
-    start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
-    first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
-    second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
-    for year in range(start_year, (start_year+6)):
-        url_zapchast = f"{first_part}{year}-{year}{second_part}"
+    if count_page > 1:
+        href_zapchast = []
+        item_href_categories = str(item_href_categories)
+        start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
+        first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
+        second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
+        for year in range(start_year, (start_year+6)):
+            url_zapchast = f"{first_part}{year}-{year}{second_part}"
+            
+            print(url_zapchast)
         
-        print(url_zapchast)
-    
-        #print(url_zapchast)
-        driver.get(url=url_zapchast)
-        time.sleep(1)
+            #print(url_zapchast)
+            driver.get(url=url_zapchast)
+            time.sleep(1)
 
-        with open("excample.html", "w", encoding="utf-8") as file:
-            file.write(driver.page_source)
+            with open("excample.html", "w", encoding="utf-8") as file:
+                file.write(driver.page_source)
 
-        with open("excample.html", encoding="utf-8") as file:
-            src = file.read()
+            with open("excample.html", encoding="utf-8") as file:
+                src = file.read()
 
-        soup = BeautifulSoup(src, 'html.parser')
+            soup = BeautifulSoup(src, 'html.parser')
 
-        count = soup.find_all("h5", class_="list-title js-var_iCount")
-        if count == []:
-            null_or_xz[url_zapchast] = year
-            print("Добавлена в отдельный список")
-        #print(count)
-        for item in count:
-            item = str(item)
-            if "<b>" in item:
-                #print(item)
-                num_page = item[item.find("<b>")+3: item.find("</b>")]
-                num_page = int(num_page.replace(" ",""))
-                print(num_page)
-                summa = summa + num_page
-                if num_page > 0 and num_page < 1201:
-                    page = int(num_page / 20) + 1
-                    zapchast00_1200_year_price_one_year[url_zapchast] = page
-                elif num_page > 1200:
-                    page = int(num_page / 20) + 1
-                    zapchast1200_year_price_one_year[url_zapchast] = page
+            count = soup.find_all("h5", class_="list-title js-var_iCount")
+            if count == []:
+                null_or_xz[url_zapchast] = year
+                print("Добавлена в отдельный список")
+            #print(count)
+            for item in count:
+                item = str(item)
+                if "<b>" in item:
+                    #print(item)
+                    num_page = item[item.find("<b>")+3: item.find("</b>")]
+                    num_page = int(num_page.replace(" ",""))
+                    print(num_page)
+                    summa = summa + num_page
+                    if num_page > 0 and num_page < 1201:
+                        page = int(num_page / 20) + 1
+                        zapchast00_1200_year_price_one_year[url_zapchast] = page
+                    elif num_page > 1200:
+                        page = int(num_page / 20) + 1
+                        zapchast1200_year_price_one_year[url_zapchast] = page
 
-        os.remove("excample.html") 
+            os.remove("excample.html") 
 
 with open("zapchast00_1200_year_price_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200_year_price_one_year, file, indent=4, ensure_ascii=False)

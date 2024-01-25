@@ -13,7 +13,10 @@ from webdriver_manager.chrome import ChromeDriverManager
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
-proxies = {'https': 'http://user148177:nho68y@158.46.250.241:8938'}
+proxies = {
+    'http': 'http://ZKrvjACdvWKt3Y:Nylesszpg@45.8.125.114:54221',
+    'https': 'http://ZKrvjACdvWKt3Y:Nylesszpg@45.8.125.114:54221'
+}
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
@@ -257,7 +260,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
 
                             for item_benzik in benzik_obj:
-                                benzik = None
+                                benzik = " "
                                 benzik = item_benzik.text.replace("  ","").replace("\n","")
                                 if "л," in benzik:
                                     volume = benzik[benzik.find("л,") - 5 : benzik.find("л,") + 1]
