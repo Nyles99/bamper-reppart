@@ -164,7 +164,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             num_zap = " "
                             num_obj = soup.find_all("span", class_="media-heading cut-h-65")
                             for item_num in num_obj:
-                                num_zap = str(item_num.text)
+                                num_zap = str(item_num.text).replace("  ","").replace('"',"")
                                 num_zap = num_zap.replace("  ","").replace("\n","")
                             print(num_zap)    
 

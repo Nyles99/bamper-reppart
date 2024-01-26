@@ -14,8 +14,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 proxies = {
-    'http': f'http://CS1CVV6R:r9GRjJFW@85.143.55.66:62134',
-    'https': 'http://CS1CVV6R:r9GRjJFW@85.143.55.66:62134'
+    'http': f'http://QXjcwHrS6qvxON:Nylesszpg@95.182.122.241:54240',
+    'https': 'http://QXjcwHrS6qvxON:Nylesszpg@95.182.122.241:54240'
 }
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
@@ -168,7 +168,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             num_zap = " "
                             num_obj = soup.find_all("span", class_="media-heading cut-h-65")
                             for item_num in num_obj:
-                                num_zap = str(item_num.text)
+                                num_zap = str(item_num.text).replace("  ","").replace('"',"")
                                 num_zap = num_zap.replace("  ","").replace("\n","")
                             print(num_zap)    
 
