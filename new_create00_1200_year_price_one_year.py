@@ -109,7 +109,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/{priceh}/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_{diapazon}%2F{priceh}&2Fstore_Y&more=Y&PAGEN_1={i}"
         nomer_str += 1
-        print(f'Номер страницы {nomer_str} - Внимательно')
+        print(f'Номер страницы {nomer_str} - Внимательно!')
         print(item_href_categories)
 
         
@@ -163,7 +163,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             num_obj = soup.find_all("span", class_="media-heading cut-h-65")
                             for item_num in num_obj:
                                 num_zap = str(item_num.text).replace("  ","").replace('"',"")
-                                num_zap = num_zap.replace("  ","").replace("\n","")
+                                num_zap = num_zap.replace(",","").replace("\n","")
                             print(num_zap)    
 
                             artical_obj = soup.find_all("span", class_="data-type f13")
