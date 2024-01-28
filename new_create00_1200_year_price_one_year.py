@@ -180,7 +180,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             info_obj = soup.find_all("span", class_="media-heading cut-h-375")
                             for item_info in info_obj:
                                 info = str(item_info.text.replace("  ","").replace("\n",""))
-                                info = info.replace(","," ")
+                                info = info.replace(","," ").replace('"',' ')
                                 info_lower = info.lower()
                                 if "ПОД ЗАКАЗ" in info:
                                     order = "ПОД ЗАКАЗ"
