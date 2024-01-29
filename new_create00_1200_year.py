@@ -110,11 +110,12 @@ for item_href_categories, number_page in srazy_parsim.items():
     print(modelh, diapazon)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
-        nomer_str += 1
-        print(f'Номер страницы {nomer_str} - Внимательно')
-        print(item_href_categories)
+        
         p = 1
         if nomer_str >= input_page:
+            nomer_str += 1
+            print(f'Номер страницы {nomer_str} - Внимательно')
+            print(item_href_categories)
             try:
                 req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
                 src = req.text

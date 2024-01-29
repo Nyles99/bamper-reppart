@@ -113,6 +113,7 @@ for item_href_categories, number_page in srazy_parsim.items():
         print(f'Номер страницы {nomer_str} - Внимательно')
         print(item_href_categories)
         if nomer_str >= input_page:
+            nomer_str += 1
             try:
                 req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
                 src = req.text
