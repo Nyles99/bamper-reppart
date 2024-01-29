@@ -154,9 +154,9 @@ for item_href_categories, number_page in srazy_parsim.items():
                                 number_b = string.find('</b>')
                                 name_part = string[2:number_b]
                                 model_and_year = string[string.find(' к ')+3 :]
-                                marka = model_and_year[: model_and_year.find(" ")]
-                                model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")]
-                                year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")]
+                                marka = model_and_year[: model_and_year.find(" ")].replace(",","").replace('"',"")
+                                model = model_and_year[model_and_year.find(" ")+1 : model_and_year.find(",")].replace(",","").replace('"',"")
+                                year = model_and_year[model_and_year.find(",")+2 : model_and_year.find("г.")].replace(",","").replace('"',"")
 
                             num_zap = " "
                             num_obj = soup.find_all("span", class_="media-heading cut-h-65")
