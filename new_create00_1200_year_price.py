@@ -111,7 +111,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     diapazon = item_href_categories[item_href_categories.find("god_")+4:item_href_categories.find("/price-ot_")]
     priceh = item_href_categories[item_href_categories.find("/price-ot_")+1:item_href_categories.find("/store_Y/?")]
-    print(modelh, diapazon, priceh)
+    #print(modelh, diapazon, priceh)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/{priceh}/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_{diapazon}%2F{priceh}&2Fstore_Y&more=Y&PAGEN_1={i}"
         
@@ -188,6 +188,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             for item_info in info_obj:
                                 info = str(item_info.text.replace("  ","").replace("\n",""))
                                 info = info.replace(","," ").replace('"',' ')
+                                info = info.replace("\r","")
                                 info_lower = info.lower()
                                 if "ПОД ЗАКАЗ" in info:
                                     order = "ПОД ЗАКАЗ"

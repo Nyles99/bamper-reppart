@@ -181,6 +181,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             for item_info in info_obj:
                                 info = str(item_info.text.replace("  ","").replace("\n",""))
                                 info = info.replace(","," ").replace('"',' ')
+                                info = info.replace("\r","")
                                 info_lower = info.lower()
                                 if "ПОД ЗАКАЗ" in info:
                                     order = "ПОД ЗАКАЗ"
