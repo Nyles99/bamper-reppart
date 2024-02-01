@@ -14,10 +14,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 proxies = {
-    'http': 'http://RpB4fLKbn2eivP:Nylesszpg@95.182.123.11:54287',
-    'https': 'http://RpB4fLKbn2eivP:Nylesszpg@95.182.123.11:54287'
+    'http': 'http://mqyT0t:RUEaQg@45.133.225.205:8000',
+    'https': 'http://mqyT0t:RUEaQg@45.133.225.205:8000'
 }
-input_page = int(input("С какой страницы продолжим?Если сначала - вводи 1 и Enter "))
+input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
@@ -45,32 +45,17 @@ while True:
 # закрываем файл
 file1.close
 
-# Адрес сайта, с которого мы будем получать данные
-url_byn = "https://www.google.com/search?q=курс+доллара+к+белорусскому+рублю"
- 
-# Получаем содержимое страницы
-response = requests.get(url_byn)
-    
-# Создаем объект BeautifulSoup для парсинга HTML-разметки
-soup = BeautifulSoup(response.content, 'html.parser')
-    
-# Получаем элемент с курсом валюты
-result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
-    
-# Возвращаем курс валюты как число
-usd_byn =  float(result.replace(",", ".")[:4])
-print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="00_1200_year" + time.strftime('%Y-%m-%d')
+folder_name ="00_1200_" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
 watermark = Image.open("moe.png")
-if os.path.exists(f"00_1200_year_data_bamper.csv"):
+if os.path.exists(f"00_1200_100$_bamper.csv"):
     print("Папка уже есть")
 else:
-    with open(f"00_1200_year_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_100$_bamper.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
@@ -96,7 +81,7 @@ else:
             )
         )
 
-with open("zapchast00_1200_year.json", encoding="utf-8") as file:
+with open("baks00_1200.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 nomer_str = 0
 zapchast_in_black_list = 0
@@ -106,12 +91,9 @@ for item_href_categories, number_page in srazy_parsim.items():
     markah = item_href_categories[item_href_categories.find("marka")+6:item_href_categories.find("/model_")]
     #print(markah)
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
-    diapazon = item_href_categories[item_href_categories.find("god_")+4:item_href_categories.find("/price-ot_70/sto")]
-    #print(modelh, diapazon)
+    #print(modelh)
     for i in range(1, number_page+1):
-        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/price-ot_70/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"
-        
-        p = 1
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_330/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"       
         if nomer_str >= input_page:
             nomer_str += 1
             print(f'Номер страницы {nomer_str} - Внимательно')
@@ -119,7 +101,6 @@ for item_href_categories, number_page in srazy_parsim.items():
             try:
                 req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
                 src = req.text
-                
                 soup = BeautifulSoup(src, 'html.parser')
                 href_part = soup.find_all("div", class_="add-image")
                 #print(href_part)
@@ -143,14 +124,13 @@ for item_href_categories, number_page in srazy_parsim.items():
                         try:
                             req = requests.get(url=href_to_zapchast, headers=headers, proxies=proxies)
                             src = req.text
-
                             soup = BeautifulSoup(src, 'html.parser')
-                            price_obj = soup.find_all("meta", itemprop="price")
+                            price_obj = soup.find_all("span", class_="auto-price  pull-right tooltip_html")
                             #print (price_obj)
                             #if price_obj != []:
                             for item_price in price_obj:
-                                price = item_price.get("content").replace(" ","")
-                                price = round(float(price)/usd_byn)
+                                price = str(item_price.get("data-original-title").replace(" ",""))
+                                price = price[price.find("~") + 1 : price.find("$")]
                             marka_obj = soup.find_all("span", itemprop="name")
                             for item_marka in marka_obj:
                                 all_title_name = str(item_marka)
@@ -167,7 +147,8 @@ for item_href_categories, number_page in srazy_parsim.items():
                             for item_num in num_obj:
                                 num_zap = str(item_num.text).replace("  ","").replace('"',"")
                                 num_zap = num_zap.replace(",","").replace("\n","")
-                            print(num_zap)    
+                            print(num_zap)
+
 
                             artical_obj = soup.find_all("span", class_="data-type f13")
                             for item_artical in artical_obj:
@@ -243,7 +224,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                                         #os.remove("img.png")
                                         #print(f"{name_href} - неверный формат или ерунда")
                                     except UnidentifiedImageError:
-                                            foto = ""
+                                            foto = " "
                                             print("Битая фотка")
                                             #os.remove(f"{folder_name}/{name_href}.png")
                                 except Exception:
@@ -258,8 +239,11 @@ for item_href_categories, number_page in srazy_parsim.items():
                             transmission = " "
                             engine = " "
                             volume = " "
+                            
                             car_body = " "
                             # print(benzik_obj)
+
+
                             for item_benzik in benzik_obj:
                                 benzik = " "
                                 benzik = item_benzik.text.replace("  ","").replace("\n","")
@@ -304,7 +288,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             #print(volume, fuel, transmission, engine, car_body)
                             #print(benzik)
 
-                            file = open(f"00_1200_year_data_bamper.csv", "a", encoding="utf-8", newline='')
+                            file = open(f"00_1200_100$_bamper.csv", "a", encoding="utf-8", newline='')
                             writer = csv.writer(file)
 
                             writer.writerow(
@@ -330,18 +314,16 @@ for item_href_categories, number_page in srazy_parsim.items():
                                 )
                             )
                             file.close()
-                            #os.remove(f"{num_provider}.html")
+                            #os.remove(f"{name_href}.html")
                             with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                                 print('report: ', report)
                         except Exception:
-                            print("какая-то хуйня с карточкой запчастей")
+                            print("какая-то хуйня с карточкой запчастей")    
                     else:
                         print(href_to_zapchast + " находится в black-list, уже "+ str(zapchast_in_black_list) )
                         zapchast_in_black_list += 1
-                        #os.remove(f"{number_page}.html")
                         with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                             print('report: ', report)
-                #os.remove(f"{number_page}.html")
             except Exception:
                 print("какая-то хуйня со страницей запчастей")    
         else:

@@ -229,7 +229,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
 
 
-                                        foto = "http://95.163.237.225/"+ name_href + ".png"
+                                        foto = "http://194.58.122.233/"+ name_href + ".png"
                                         img = Image.open(f"{folder_name}/{name_href}.png")
                                         #print(foto)
                                         #img = Image.open(f"fotku/{name_href}.png")    
