@@ -14,8 +14,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 proxies = {
-    'http': 'http://mqyT0t:RUEaQg@45.133.225.205:8000',
-    'https': 'http://mqyT0t:RUEaQg@45.133.225.205:8000'
+    'http': 'http://Fyq9HlP0zQLj4o:Nylesszpg@46.8.158.109:54376',
+    'https': 'http://Fyq9HlP0zQLj4o:Nylesszpg@46.8.158.109:54376'
 }
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
@@ -93,7 +93,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     #print(modelh)
     for i in range(1, number_page+1):
-        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2023/price-ot_330/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"       
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2000-2011/price-ot_330/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"       
         if nomer_str >= input_page:
             nomer_str += 1
             print(f'Номер страницы {nomer_str} - Внимательно')
@@ -117,7 +117,8 @@ for item_href_categories, number_page in srazy_parsim.items():
                     number_href_reverse = number_href_reverse_second[: number_href_reverse_second.find("/")]
                     name_href = number_href_reverse[::-1]
                     name_href = name_href.replace("*","_").replace('%','_')
-                    #print(name_href)
+                    #
+                    # print(name_href)
                     num_provider = name_href[: name_href.find("-")]
                     #print(num_provider)
                     if num_provider not in black_list:
@@ -125,11 +126,11 @@ for item_href_categories, number_page in srazy_parsim.items():
                             req = requests.get(url=href_to_zapchast, headers=headers, proxies=proxies)
                             src = req.text
                             soup = BeautifulSoup(src, 'html.parser')
-                            price_obj = soup.find_all("span", class_="auto-price  pull-right tooltip_html")
+                            price_obj = soup.find_all("span", itemprop="offers")
                             #print (price_obj)
                             #if price_obj != []:
                             for item_price in price_obj:
-                                price = str(item_price.get("data-original-title").replace(" ",""))
+                                price = str(item_price)
                                 price = price[price.find("~") + 1 : price.find("$")]
                             marka_obj = soup.find_all("span", itemprop="name")
                             for item_marka in marka_obj:

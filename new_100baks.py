@@ -82,7 +82,7 @@ while True:
 # закрываем файл
 file1.close
 
-url = "https://bamper.by/catalog/modeli/"
+"""url = "https://bamper.by/catalog/modeli/"
 
 req = requests.get(url, headers=headers)
 src = req.text
@@ -130,7 +130,7 @@ for item_text_marka, item_href_marka in marka_need_list.items():
                 #print(item_text, item_href_model)
 
 with open("modelubaks.json", "a", encoding="utf-8") as file:
-    json.dump(model_need_list, file, indent=4, ensure_ascii=False)        
+    json.dump(model_need_list, file, indent=4, ensure_ascii=False)"""        
 
 with open('modelubaks.json', encoding="utf-8") as file:
     model_need_list = json.load(file)
@@ -150,34 +150,37 @@ for item_text_model, item_href_model in model_need_list.items():
     
     url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2000-2011/price-ot_330/store_Y/?more=Y"
     #print(url_zapchast)
-    driver.get(url=url_zapchast)
-    time.sleep(1)
+    try:
+        driver.get(url=url_zapchast)
+        time.sleep(1)
 
-    with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
-        file.write(driver.page_source)
+        with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
 
-    with open(f"{item_text_model}.html", encoding="utf-8") as file:
-        src = file.read()
+        with open(f"{item_text_model}.html", encoding="utf-8") as file:
+            src = file.read()
 
-    soup = BeautifulSoup(src, 'html.parser')
+        soup = BeautifulSoup(src, 'html.parser')
 
-    count = soup.find_all("h5", class_="list-title js-var_iCount")
-    #print(count)
-    for item in count:
-        item = str(item)
-        if "<b>" in item:
-            #print(item)
-            num_page = item[item.find("<b>")+3: item.find("</b>")]
-            num_page = int(num_page.replace(" ",""))
-            summa = summa + num_page
-            if num_page > 0 and num_page < 1201:
-                page = int(num_page / 20) + 1
-                baks00_1200[url_zapchast] = page
-            elif num_page > 1200:
-                page = int(num_page / 20) + 1
-                baks1200[url_zapchast] = page
+        count = soup.find_all("h5", class_="list-title js-var_iCount")
+        #print(count)
+        for item in count:
+            item = str(item)
+            if "<b>" in item:
+                #print(item)
+                num_page = item[item.find("<b>")+3: item.find("</b>")]
+                num_page = int(num_page.replace(" ",""))
+                summa = summa + num_page
+                if num_page > 0 and num_page < 1201:
+                    page = int(num_page / 20) + 1
+                    baks00_1200[url_zapchast] = page
+                elif num_page > 1200:
+                    page = int(num_page / 20) + 1
+                    baks1200[url_zapchast] = page
 
-    os.remove(f"{item_text_model}.html") 
+        os.remove(f"{item_text_model}.html")
+    except Exception:
+        print (f"Хуйня со страницей {url_zapchast}") 
 
 with open("baks00_1200.json", "a", encoding="utf-8") as file:
     json.dump(baks00_1200, file, indent=4, ensure_ascii=False)

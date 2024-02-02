@@ -97,7 +97,7 @@ else:
 
 zapchast_in_black_list = 0
 
-item_href_categories = "https://bamper.by/zapchast_fara-pravaya/13735-105473294/"    
+item_href_categories = "https://bamper.by/zapchast_rulevaya-reyka/15107-59841735/"    
 
 print(item_href_categories)
 
@@ -113,12 +113,13 @@ req = requests.get(url=item_href_categories, headers=headers)
 src = req.text
 
 soup = BeautifulSoup(src, 'html.parser')
-price_obj = soup.find_all("meta", itemprop="price")
-#print (price_obj)
+price_obj = soup.find_all("span", itemprop="offers")
+print (price_obj)
 #if price_obj != []:
 for item_price in price_obj:
-    price = item_price.get("content").replace(" ","")
-    price = round(float(price)/usd_byn)
+    price = str(item_price)
+    price = price[price.find("~") + 1 : price.find("$")]
+    print(price)
 marka_obj = soup.find_all("span", itemprop="name")
 for item_marka in marka_obj:
     all_title_name = str(item_marka)
