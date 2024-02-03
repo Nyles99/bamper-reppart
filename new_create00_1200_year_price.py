@@ -149,12 +149,13 @@ for item_href_categories, number_page in srazy_parsim.items():
                             src = req.text
 
                             soup = BeautifulSoup(src, 'html.parser')
-                            price_obj = soup.find_all("meta", itemprop="price")
+                            price_obj = soup.find_all("span", itemprop="offers")
                             #print (price_obj)
                             #if price_obj != []:
                             for item_price in price_obj:
-                                price = item_price.get("content").replace(" ","")
-                                price = round(float(price)/usd_byn)
+                                price = str(item_price)
+                                price = price[price.find("~") + 1 : price.find("$")]
+                            
                             marka_obj = soup.find_all("span", itemprop="name")
                             for item_marka in marka_obj:
                                 all_title_name = str(item_marka)

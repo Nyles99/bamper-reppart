@@ -37,7 +37,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
 options.add_argument("--enable-javascript")
 
-#options.add_argument("--proxy-server=31.204.2.182:9142")
+options.add_argument("--proxy-server=188.119.120.29:54375")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -50,7 +50,8 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 
 summa = 0
 
-
+driver.get(url="https://bamper.by/catalog/modeli/")
+time.sleep(30)
 
 zapchast00_1200_year_price_one_year = {}
 zapchast1200_year_price_one_year = {}
@@ -70,40 +71,45 @@ for item_href_categories, count_page in srazy_parsim.items():
             url_zapchast = f"{first_part}{year}-{year}{second_part}"
             
             print(url_zapchast)
-        
+            try:
             #print(url_zapchast)
-            driver.get(url=url_zapchast)
-            time.sleep(1)
+                driver.get(url=url_zapchast)
+                time.sleep(1)
 
-            with open("excample.html", "w", encoding="utf-8") as file:
-                file.write(driver.page_source)
+                with open("excample.html", "w", encoding="utf-8") as file:
+                    file.write(driver.page_source)
 
-            with open("excample.html", encoding="utf-8") as file:
-                src = file.read()
+                with open("excample.html", encoding="utf-8") as file:
+                    src = file.read()
 
-            soup = BeautifulSoup(src, 'html.parser')
+                soup = BeautifulSoup(src, 'html.parser')
 
-            count = soup.find_all("h5", class_="list-title js-var_iCount")
-            if count == []:
-                null_or_xz[url_zapchast] = year
-                print("Добавлена в отдельный список")
-            #print(count)
-            for item in count:
-                item = str(item)
-                if "<b>" in item:
-                    #print(item)
-                    num_page = item[item.find("<b>")+3: item.find("</b>")]
-                    num_page = int(num_page.replace(" ",""))
-                    print(num_page)
-                    summa = summa + num_page
-                    if num_page > 0 and num_page < 1201:
-                        page = int(num_page / 20) + 1
-                        zapchast00_1200_year_price_one_year[url_zapchast] = page
-                    elif num_page > 1200:
-                        page = int(num_page / 20) + 1
-                        zapchast1200_year_price_one_year[url_zapchast] = page
+                count = soup.find_all("h5", class_="list-title js-var_iCount")
+                #print(count)
+                for item in count:
+                    item = str(item)
+                    if "<b>" in item:
+                        #print(item)
+                        num_page = item[item.find("<b>")+3: item.find("</b>")]
+                        num_page = int(num_page.replace(" ",""))
+                        print(num_page)
+                        summa = summa + num_page
+                        if num_page > 0 and num_page < 1201:
+                            page = int(num_page / 20) + 1
+                            zapchast00_1200_year_price_one_year[url_zapchast] = page
+                        elif num_page > 1200:
+                            page = int(num_page / 20) + 1
+                            zapchast1200_year_price_one_year[url_zapchast] = page
+                        elif num_page == 0:
+                            print(url_zapchast, "Страница с нулевым значением нам не нужна")
+                        else:
+                            null_or_xz[url_zapchast] = page
+                            print("Страница записалась в отдельный список")
 
-            os.remove("excample.html") 
+                os.remove("excample.html")
+            except Exception:
+                null_or_xz[url_zapchast] = count_page
+                print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")   
 
 with open("zapchast00_1200_year_price_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200_year_price_one_year, file, indent=4, ensure_ascii=False)

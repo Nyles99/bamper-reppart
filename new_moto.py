@@ -52,11 +52,12 @@ summa = 0
 moto = {}
 
 
-file1 = open("black-list.txt", "r")
+file1 = open("moto_bamper.txt", "r")
 while True:
     line = file1.readline()
     line = line.replace("\n","").replace("'","").replace(" ","")
     url = f"https://bamper.by/zchbu/moto/marka_{line}/"
+    print(url)
     moto[line] = url
     # прерываем цикл, если строка пустая
     if not line:
@@ -66,7 +67,7 @@ file1.close
 with open("moto.json", "a", encoding="utf-8") as file:
     json.dump(moto, file, indent=4, ensure_ascii=False)      
 
-with open('modelubaks.json', encoding="utf-8") as file:
+with open('moto.json', encoding="utf-8") as file:
     model_need_list = json.load(file)
 
 moto00_1200 = {}

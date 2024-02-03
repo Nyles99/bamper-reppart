@@ -45,7 +45,7 @@ while True:
 # закрываем файл
 file1.close
 
-folder_name ="00_1200_" + time.strftime('%Y-%m-%d')
+folder_name ="00_1200_100$" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
@@ -93,7 +93,7 @@ for item_href_categories, number_page in srazy_parsim.items():
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     #print(modelh)
     for i in range(1, number_page+1):
-        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2000-2011/price-ot_330/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2012-2023%2Fprice-ot_70&2Fstore_Y&more=Y&PAGEN_1={i}"       
+        item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2000-2011/price-ot_330/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_2000-2011%2Fprice-ot_330&2Fstore_Y&more=Y&PAGEN_1={i}"       
         if nomer_str >= input_page:
             nomer_str += 1
             print(f'Номер страницы {nomer_str} - Внимательно')
