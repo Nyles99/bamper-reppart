@@ -167,6 +167,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             for item_num in num_obj:
                                 num_zap = str(item_num.text).replace("  ","").replace('"',"")
                                 num_zap = num_zap.replace(",","").replace("\n","")
+                                num_zap = num_zap.replace("далее","")
                             print(num_zap)    
 
                             artical_obj = soup.find_all("span", class_="data-type f13")
@@ -178,7 +179,7 @@ for item_href_categories, number_page in srazy_parsim.items():
 
                                         
                             order = " "
-                            status = "Б/у"
+                            status = "Б.у."
                             info = " "
                             info_obj = soup.find_all("span", class_="media-heading cut-h-375")
                             for item_info in info_obj:
