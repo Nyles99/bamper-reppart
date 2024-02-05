@@ -14,8 +14,8 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 proxies = {
-    'http': 'http://pbcg0Ihhq0gfN0:Nylesszpg@188.119.120.29:54375',
-    'https': 'http://pbcg0Ihhq0gfN0:Nylesszpg@188.119.120.29:54375'
+    'http': 'http://dmUq5yXN:gwR4xvLA@85.142.144.57:62580',
+    'https': 'http://dmUq5yXN:gwR4xvLA@85.142.144.57:62580'
 }
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
 
