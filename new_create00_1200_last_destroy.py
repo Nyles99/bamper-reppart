@@ -14,13 +14,10 @@ from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 
 proxies = {
-    'http': 'http://Knx076MThNDiJ4:Nylesszpg@95.182.122.11:54457',
-    'https': 'http://Knx076MThNDiJ4:Nylesszpg@95.182.122.11:54457'
+    'http': 'http://dmUq5yXN:gwR4xvLA@85.142.5.104:64890',
+    'https': 'http://dmUq5yXN:gwR4xvLA@85.142.5.104:64890'
 }
 input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
-
-
-
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
@@ -63,17 +60,17 @@ result = soup.find("div", class_="BNeawe iBp4i AP7Wnd").get_text()
 # Возвращаем курс валюты как число
 usd_byn =  float(result.replace(",", ".")[:4])
 print("На сегодня 1USD = "+ str(usd_byn) + "BYN")
-folder_name ="00_1200_year_price" + time.strftime('%Y-%m-%d')
+folder_name ="00_1200_year_price_one_year" + time.strftime('%Y-%m-%d')
 if os.path.exists(folder_name):
     print("Папка уже есть")
 else:
     os.mkdir(folder_name)
 
 watermark = Image.open("moe.png")
-if os.path.exists(f"00_1200_year_price_data_bamper.csv"):
+if os.path.exists(f"00_1200_last_destroy.csv"):
     print("Папка уже есть")
 else:
-    with open(f"00_1200_year_price_data_bamper.csv", "w", encoding="utf-8") as file_data:
+    with open(f"00_1200_last_destroy.csv", "w", encoding="utf-8") as file_data:
         writer = csv.writer(file_data)
 
         writer.writerow(
@@ -95,11 +92,11 @@ else:
                 "ЦЕНА",
                 "НОВАЯ",
                 "ФОТО",
-                "СТРАНИЦА ОКОНЧАНИЯ",
+                "СТРАНИЦА окончания",
             )
         )
 
-with open("zapchast00_1200_year_price.json", encoding="utf-8") as file:
+with open("zapchast00_1200_last_destroy.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 nomer_str = 0
 zapchast_in_black_list = 0
@@ -111,15 +108,14 @@ for item_href_categories, number_page in srazy_parsim.items():
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     diapazon = item_href_categories[item_href_categories.find("god_")+4:item_href_categories.find("/price-ot_")]
     priceh = item_href_categories[item_href_categories.find("/price-ot_")+1:item_href_categories.find("/store_Y/?")]
-    #print(modelh, diapazon, priceh)
+    print(modelh, diapazon, priceh)
     for i in range(1, number_page+1):
         item_href_categories = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{diapazon}/{priceh}/store_Y/?ACTION=REWRITED3&FORM_DATA=marka_{markah}%2Fmodel_{modelh}%2Fgod_{diapazon}%2F{priceh}&2Fstore_Y&more=Y&PAGEN_1={i}"
-        
 
         
         if nomer_str >= input_page:
             nomer_str += 1
-            print(f'Номер страницы {nomer_str} - Внимательно')
+            print(f'Номер страницы {nomer_str} - Внимательно!')
             print(item_href_categories)
             try:
                 req = requests.get(url=item_href_categories, headers=headers, proxies=proxies)
@@ -155,7 +151,6 @@ for item_href_categories, number_page in srazy_parsim.items():
                             for item_price in price_obj:
                                 price = str(item_price)
                                 price = price[price.find("~") + 1 : price.find("$")]
-                            
                             marka_obj = soup.find_all("span", itemprop="name")
                             for item_marka in marka_obj:
                                 all_title_name = str(item_marka)
@@ -200,6 +195,8 @@ for item_href_categories, number_page in srazy_parsim.items():
                                 elif "новая" in info_lower:
                                     status = "Новая"
                                 elif "новые" in info_lower:
+                                    status = "Новые"
+                                elif "новых" in info_lower:
                                     status = "Новые"
                             #print(status)
                             #print(order)        
@@ -249,14 +246,14 @@ for item_href_categories, number_page in srazy_parsim.items():
                                         #os.remove("img.png")
                                         #print(f"{name_href} - неверный формат или ерунда")
                                     except UnidentifiedImageError:
-                                            foto = " "
+                                            foto = "Битая фотка"
                                             print("Битая фотка")
                                             #os.remove(f"{folder_name}/{name_href}.png")
                                 except Exception:
                                     print("Какая-то хуйня с ссылкой на фотографию")
                                     foto = " "
                             else:
-                                foto = " "
+                                foto = "Нет фотографии"
                                 print(name_href , "без фотки")
                                     
                             benzik_obj = soup.find_all("div", style="font-size: 17px;")
@@ -310,7 +307,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                             #print(volume, fuel, transmission, engine, car_body)
                             #print(benzik)
 
-                            file = open(f"00_1200_year_price_data_bamper.csv", "a", encoding="utf-8", newline='')
+                            file = open(f"00_1200_last_destroy.csv", "a", encoding="utf-8", newline='')
                             writer = csv.writer(file)
 
                             writer.writerow(
@@ -347,7 +344,7 @@ for item_href_categories, number_page in srazy_parsim.items():
                         with requests.request("POST", href_to_zapchast, headers=headers, proxies=proxies) as report:
                             print('report: ', report)
             except Exception:
-                print("какая-то хуйня со страницей запчастей")    
+                print("Какая-то хуйня со страницей")
         else:
             nomer_str += 1
 #os.remove("modelu.json")
