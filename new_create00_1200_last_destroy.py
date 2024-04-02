@@ -19,7 +19,7 @@ proxies = {
     'http': f'{proxy}',
     'https': f'{proxy}'
 }
-input_page = int(input("С какой страницы продолжим?Если сначала- вводи 1 и Enter "))
+input_page = int(input("С какой страницы продолжим?Если сначала- вводи 0 и Enter "))
 
 ImageFile.LOAD_TRUNCATED_IMAGES = True
 headers = {
