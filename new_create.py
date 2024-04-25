@@ -17,6 +17,15 @@ from PIL import Image, UnidentifiedImageError
 import time
 
 
+proxy = input("Введи прокси в формате логин:пароль@46.8.158.109:54376 - ")
+ip = proxy[proxy.find("@")+1 : ]
+print(ip)
+
+proxies = {
+    'http': f'{proxy}',
+    'https': f'{proxy}'
+}
+
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -37,7 +46,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
 options.add_argument("--enable-javascript")
 
-#options.add_argument("--proxy-server=31.204.2.182:9142")
+options.add_argument(f"--proxy-server={ip}")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -95,8 +104,9 @@ while True:
 #print(black_list)
 
 url = "https://bamper.by/catalog/modeli/"
-
-req = requests.get(url, headers=headers)
+driver.get(url=url)
+time.sleep(30)
+req = requests.get(url, headers=headers, proxies=proxies)
 src = req.text
 #print(src)
 #with open("index.html", "w", encoding="utf-8") as file:
@@ -123,7 +133,7 @@ for item_text_marka, item_href_marka in marka_need_list.items():
     #print(item_text_marka)
     if item_text_marka not in black_mark:
         print(item_href_marka)
-        req = requests.get(url=item_href_marka, headers=headers)
+        req = requests.get(url=item_href_marka, headers=headers, proxies=proxies)
         src = req.text
         #print(src)
 

@@ -16,6 +16,14 @@ import csv
 from PIL import Image, UnidentifiedImageError
 import time
 
+proxy = input("Введи прокси в формате логин:пароль@46.8.158.109:54376 - ")
+ip = proxy[proxy.find("@")+1 : ]
+print(ip)
+
+proxies = {
+    'http': f'{proxy}',
+    'https': f'{proxy}'
+}
 
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
@@ -37,7 +45,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
 options.add_argument("--enable-javascript")
 
-#options.add_argument("--proxy-server=31.204.2.182:9142")
+options.add_argument(f"--proxy-server={ip}")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -94,6 +102,9 @@ while True:
     black_model.append(line)
 #print(black_list)
 
+url = "https://bamper.by/catalog/modeli/"
+driver.get(url=url)
+time.sleep(30)
 
 
 zapchast00_1200_year = {}
