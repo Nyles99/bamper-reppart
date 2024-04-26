@@ -17,6 +17,15 @@ from PIL import Image, UnidentifiedImageError
 import time
 
 
+proxy = input("Введи прокси в формате логин:пароль@46.8.158.109:54376 - ")
+ip = proxy[proxy.find("@")+1 : ]
+print(ip)
+
+proxies = {
+    'http': f'{proxy}',
+    'https': f'{proxy}'
+}
+
 headers = {
     "Accept" : "application/json, text/javascript, */*; q=0.01",
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -37,7 +46,7 @@ options.add_argument("--disable-gpu")
 options.add_argument("--disable-infobars")# //https://stackoverflow.com/a/43840128/1689770
 options.add_argument("--enable-javascript")
 
-#options.add_argument("--proxy-server=31.204.2.182:9142")
+options.add_argument(f"--proxy-server={ip}")
 driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=options)
 
 driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
@@ -47,7 +56,11 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
         delete window.cdc_adoQpoasnfa76pfcZLmcfl_Symbol:
     '''
 })
+url = "https://bamper.by/catalog/modeli/"
+driver.get(url=url)
+time.sleep(30)
 
+#http://dmUq5yXN:gwR4xvLA@85.142.145.101:63178
 summa = 0
 
 
@@ -66,10 +79,10 @@ for item_href_categories, count_page in srazy_parsim.items():
     #print(markah)
     modelh = item_href_categories[item_href_categories.find("model")+6:item_href_categories.find("/god_")]
     print(markah, modelh)"""
-    href_70_200 = item_href_categories[: item_href_categories.find("/store_Y")] + "/price-do_200/store_Y/?more=Y"
-    href_200_500 = item_href_categories[: item_href_categories.find("/price-ot_70")] + "/price-ot_200/price-do_500/store_Y/?more=Y"
-    href_500 = item_href_categories[: item_href_categories.find("/price-ot_70")] + "/price-ot_500/store_Y/?more=Y"
-    href_zapchast.append(href_70_200)
+    href_60_200 = item_href_categories[: item_href_categories.find("/store_Y")] + "/price-do_200/store_Y/?more=Y"
+    href_200_500 = item_href_categories[: item_href_categories.find("/price-ot_60")] + "/price-ot_200/price-do_500/store_Y/?more=Y"
+    href_500 = item_href_categories[: item_href_categories.find("/price-ot_60")] + "/price-ot_500/store_Y/?more=Y"
+    href_zapchast.append(href_60_200)
     href_zapchast.append(href_200_500)
     href_zapchast.append(href_500)
 

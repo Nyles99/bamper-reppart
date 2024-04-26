@@ -124,7 +124,7 @@ for item_href_categories, count_page in srazy_parsim.items():
     for m in range(1,3):
         year_in = 2006 + 6 * m
         year_out = 2012 + 6 * m
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{year_in}-{year_out}/price-ot_70/store_Y/?more=Y"
+        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_{year_in}-{year_out}/price-ot_60/store_Y/?more=Y"
         #print(url_zapchast)
         driver.get(url=url_zapchast)
         time.sleep(1)
