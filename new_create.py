@@ -169,8 +169,8 @@ for item_text_model, item_href_model in model_need_list.items():
         print(item_href_model)
         markah = item_href_model[: item_href_model.find("-")]
         modelh = item_href_model[item_href_model.find("-") + 1 :]
-        
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_300/price-do_999/store_y/?more=Y"
+        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2016/price-ot_300/price-do_999/store_y/?more=Y"
+        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
         #print(url_zapchast)
         driver.get(url=url_zapchast)
         time.sleep(1)
