@@ -106,7 +106,7 @@ while True:
 url = "https://bamper.by/catalog/modeli/"
 driver.get(url=url)
 time.sleep(30)
-req = requests.get(url, headers=headers, proxies=proxies)
+"""req = requests.get(url, headers=headers, proxies=proxies)
 src = req.text
 #print(src)
 #with open("index.html", "w", encoding="utf-8") as file:
@@ -152,7 +152,7 @@ for item_text_marka, item_href_marka in marka_need_list.items():
                 #print(item_text, item_href_model)
 
 with open("modelu.json", "a", encoding="utf-8") as file:
-    json.dump(model_need_list, file, indent=4, ensure_ascii=False)        
+    json.dump(model_need_list, file, indent=4, ensure_ascii=False)"""        
 
 with open('modelu.json', encoding="utf-8") as file:
     model_need_list = json.load(file)
@@ -170,7 +170,8 @@ for item_text_model, item_href_model in model_need_list.items():
         markah = item_href_model[: item_href_model.find("-")]
         modelh = item_href_model[item_href_model.find("-") + 1 :]
         #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2016/price-ot_300/price-do_999/store_y/?more=Y"
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
+        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
+        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2017-2024/price-ot_300/price-do_999/store_y/?more=Y"
         #print(url_zapchast)
         driver.get(url=url_zapchast)
         time.sleep(1)
@@ -201,10 +202,10 @@ for item_text_model, item_href_model in model_need_list.items():
 
         os.remove(f"{item_text_model}.html") 
 
-with open("zapchast00_1200.json", "a", encoding="utf-8") as file:
+with open("zapchastot300_2017.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200, file, indent=4, ensure_ascii=False)
 
-with open("zapchast1200.json", "a", encoding="utf-8") as file:
+with open("zapchastot300_2017_2.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1200, file, indent=4, ensure_ascii=False)
 
 

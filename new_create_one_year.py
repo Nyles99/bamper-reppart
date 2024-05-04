@@ -67,7 +67,7 @@ zapchast00_1200_one_year = {}
 zapchast1200_one_year = {}
 null_or_xz = {}
 
-with open("zapchast1200.json", encoding="utf-8") as file:
+with open("zapchastot300_2017_2.json", encoding="utf-8") as file:
     srazy_parsim = json.load(file)
 
 for item_href_categories, count_page in srazy_parsim.items():
@@ -121,10 +121,10 @@ for item_href_categories, count_page in srazy_parsim.items():
                 null_or_xz[url_zapchast] = count_page
                 print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")   
 
-with open("zapchast00_1200_one_year.json", "a", encoding="utf-8") as file:
+with open("zapchastot300_2017_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200_one_year, file, indent=4, ensure_ascii=False)
 
-with open("zapchast1200_one_year.json", "a", encoding="utf-8") as file:
+with open("zapchast1200_ot300_2012_one_year.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1200_one_year, file, indent=4, ensure_ascii=False)
 
 with open("null.json", "a", encoding="utf-8") as file:
