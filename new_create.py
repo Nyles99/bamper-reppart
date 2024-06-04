@@ -172,7 +172,8 @@ for item_text_model, item_href_model in model_need_list.items():
         modelh = item_href_model[item_href_model.find("-") + 1 :]
         #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2016/price-ot_300/price-do_999/store_y/?more=Y"
         #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2011-2017/price-ot_300/price-do_999/store_y/?more=Y"
+        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_60/price-do_299/store_y/?more=Y"
+        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_1000/store_y/?more=Y"
         #print(url_zapchast)
         try:
             driver.get(url=url_zapchast)
@@ -280,12 +281,14 @@ for item_text_model, item_href_model in model_need_list.items():
                                                         elif num_page == 0:
                                                             print(url_zapchast, "Страница с нулевым значением нам не нужна")
                                                         else:
-                                                            null_or_xz[url_zapchast] = page
+                                                            #null_or_xz[url_zapchast] = page
                                                             print("Страница записалась в отдельный список")
 
                                                 os.remove("excample.html")
                                             except Exception:
                                                 print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                                    elif num_page == 0:
+                                        zapchast00_1200[url_zapchast] = page
                                 
                         except Exception:
                             print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
@@ -361,9 +364,6 @@ for item_text_model, item_href_model in model_need_list.items():
                                                             zapchast1200[url_zapchast] = page
                                                         elif num_page == 0:
                                                             print(url_zapchast, "Страница с нулевым значением нам не нужна")
-                                                        else:
-                                                            null_or_xz[url_zapchast] = page
-                                                            print("Страница записалась в отдельный список")
 
                                                 os.remove("excample.html")
                                             except Exception:
@@ -371,15 +371,21 @@ for item_text_model, item_href_model in model_need_list.items():
                                 
                         except Exception:
                             print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                    
+                    elif num_page == 0:
+                        null_or_xz[url_zapchast] = page
                         
             os.remove(f"{item_text_model}.html")
         except Exception:
             print(f"Старница {url_zapchast} отвалилась!!!!!!!!!!!!")
 
-with open("zapchastot1000_2012.json", "a", encoding="utf-8") as file:
+with open("null_or_xz.json", "a", encoding="utf-8") as file:
+    json.dump(null_or_xz, file, indent=4, ensure_ascii=False)
+
+with open("zapchastot60.json", "a", encoding="utf-8") as file:
     json.dump(zapchast00_1200, file, indent=4, ensure_ascii=False)
 
-with open("zapchastot1000_2012_2.json", "a", encoding="utf-8") as file:
+with open("zapchastot60.json", "a", encoding="utf-8") as file:
     json.dump(zapchast1200, file, indent=4, ensure_ascii=False)
 
 
