@@ -216,7 +216,7 @@ for url in spisok_1:
                     item_href_categories = str(url_zapchast)
                     start_year_start = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
                     end_year_start = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
-                    first_year = start_year_start + 3
+                    first_year = start_year_start + 5
                     first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
                     second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
                     
