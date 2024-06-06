@@ -60,9 +60,9 @@ driver.execute_cdp_cmd("Page.addScriptToEvaluateOnNewDocument", {
 summa = 0
 black_list = []
 black_mark = []
-black_model = []
+spisok_1 = []
 
-file1 = open("black-list.txt", "r")
+"""file1 = open("black-list.txt", "r")
 while True:
     # считываем строку
     line = file1.readline()
@@ -101,7 +101,19 @@ while True:
         break
     # выводим строку
     black_model.append(line)
-#print(black_list)
+#print(black_list)"""
+
+file1 = open("1.txt", "r", encoding="utf-8")
+while True:
+    # считываем строку
+    line = file1.readline()
+    line = line.replace("\n","").replace("'","").replace(" ","")
+    # прерываем цикл, если строка пустая
+    if not line:
+        break
+    # выводим строку
+    spisok_1.append(line)
+file1.close
 
 url = "https://bamper.by/catalog/modeli/"
 driver.get(url=url)
@@ -154,230 +166,229 @@ for item_text_marka, item_href_marka in marka_need_list.items():
 with open("modelu.json", "a", encoding="utf-8") as file:
     json.dump(model_need_list, file, indent=4, ensure_ascii=False)"""        
 
-with open('modelu.json', encoding="utf-8") as file:
-    model_need_list = json.load(file)
+"""with open('modelu.json', encoding="utf-8") as file:
+    model_need_list = json.load(file)"""
 
 zapchast00_1200 = {}
 zapchast1200 = {}
 null_or_xz = {}
 n=1
 
-for item_text_model, item_href_model in model_need_list.items():
-    if item_text_model not in black_model:
-        item_text_model = item_text_model.replace("/","_")
-        item_href_model = str(item_href_model)
-        item_href_model = item_href_model[item_href_model.find("catalog/")+8 : len(item_href_model) -1]
-        print(item_href_model)
-        markah = item_href_model[: item_href_model.find("-")]
-        modelh = item_href_model[item_href_model.find("-") + 1 :]
-        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2016/price-ot_300/price-do_999/store_y/?more=Y"
-        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
-        url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_60/price-do_299/store_y/?more=Y"
-        #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_1000/store_y/?more=Y"
-        #print(url_zapchast)
-        try:
-            driver.get(url=url_zapchast)
-            time.sleep(1)
+for url in spisok_1:
+    #item_text_model = item_text_model.replace("/","_")
+    url_zapchast = str(url)
+    #item_href_model = item_href_model[item_href_model.find("catalog/")+8 : len(item_href_model) -1]
+    print(url)
+    markah = url_zapchast[url_zapchast.find("marka_")+6 : url_zapchast.find("model_")-1 ]
+    modelh = url_zapchast[url_zapchast.find("model_")+6 : url_zapchast.find("god_")-1 ]
+    #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2012-2016/price-ot_300/price-do_999/store_y/?more=Y"
+    #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2016-2024/price-ot_1000/store_y/?more=Y"
+    #!!!!!!!!!!!!!!!url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_60/price-do_299/store_y/?more=Y"
+    #url_zapchast = f"https://bamper.by/zchbu/marka_{markah}/model_{modelh}/god_2018-2024/price-ot_1000/store_y/?more=Y"
+    #print(url_zapchast)
+    try:
+        driver.get(url=url_zapchast)
+        time.sleep(1)
 
-            with open(f"{item_text_model}.html", "w", encoding="utf-8") as file:
-                file.write(driver.page_source)
+        with open(f"{1}.html", "w", encoding="utf-8") as file:
+            file.write(driver.page_source)
 
-            with open(f"{item_text_model}.html", encoding="utf-8") as file:
-                src = file.read()
+        with open(f"{1}.html", encoding="utf-8") as file:
+            src = file.read()
 
-            soup = BeautifulSoup(src, 'html.parser')
+        soup = BeautifulSoup(src, 'html.parser')
 
-            count = soup.find_all("h5", class_="list-title js-var_iCount")
-            #print(count)
-            for item in count:
-                item = str(item)
-                if "<b>" in item:
-                    #print(item)
-                    num_page = item[item.find("<b>")+3: item.find("</b>")]
-                    num_page = int(num_page.replace(" ",""))
-                    summa = summa + num_page
-                    if num_page > 0 and num_page < 1201:
-                        page = int(num_page / 20) + 1
-                        zapchast00_1200[url_zapchast] = page
-                    elif num_page > 1200:
-                        href_zapchast = []
-                        
-                        item_href_categories = str(url_zapchast)
-                        start_year_start = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
-                        end_year_start = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
-                        first_year = start_year_start + 3
-                        first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
-                        second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
-                        
-                        url_zapchast = f"{first_part}{start_year_start}-{first_year}{second_part}"
-                        
-                        print(url_zapchast)
-                        try:
-                        #print(url_zapchast)
-                            driver.get(url=url_zapchast)
-                            time.sleep(1)
-
-                            with open("excample.html", "w", encoding="utf-8") as file:
-                                file.write(driver.page_source)
-
-                            with open("excample.html", encoding="utf-8") as file:
-                                src = file.read()
-
-                            soup = BeautifulSoup(src, 'html.parser')
-
-                            count = soup.find_all("h5", class_="list-title js-var_iCount")
-                            #print(count)
-                            for item in count:
-                                item = str(item)
-                                if "<b>" in item:
-                                    #print(item)
-                                    num_page = item[item.find("<b>")+3: item.find("</b>")]
-                                    num_page = int(num_page.replace(" ",""))
-                                    print(num_page)
-                                    summa = summa + num_page
-                                    if num_page > 0 and num_page < 1201:
-                                        page = int(num_page / 20) + 1
-                                        zapchast00_1200[url_zapchast] = page
-                                    elif num_page > 1200:
+        count = soup.find_all("h5", class_="list-title js-var_iCount")
+        #print(count)
+        for item in count:
+            item = str(item)
+            if "<b>" in item:
+                #print(item)
+                num_page = item[item.find("<b>")+3: item.find("</b>")]
+                num_page = int(num_page.replace(" ",""))
+                summa = summa + num_page
+                if num_page > 0 and num_page < 1201:
+                    page = int(num_page / 20) + 1
+                    zapchast00_1200[url_zapchast] = page
+                elif num_page > 1200:
+                    href_zapchast = []
                     
-                                        item_href_categories = str(url_zapchast)
-                                        start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
-                                        end_year = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
-                                        first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
-                                        second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
-                                        for year in range(start_year, (end_year+1)):
-                                            url_zapchast = f"{first_part}{year}-{year}{second_part}"
-                                            
-                                            print(url_zapchast)
-                                            try:
-                                            #print(url_zapchast)
-                                                driver.get(url=url_zapchast)
-                                                time.sleep(1)
-
-                                                with open("excample.html", "w", encoding="utf-8") as file:
-                                                    file.write(driver.page_source)
-
-                                                with open("excample.html", encoding="utf-8") as file:
-                                                    src = file.read()
-
-                                                soup = BeautifulSoup(src, 'html.parser')
-
-                                                count = soup.find_all("h5", class_="list-title js-var_iCount")
-                                                #print(count)
-                                                for item in count:
-                                                    item = str(item)
-                                                    if "<b>" in item:
-                                                        #print(item)
-                                                        num_page = item[item.find("<b>")+3: item.find("</b>")]
-                                                        num_page = int(num_page.replace(" ",""))
-                                                        print(num_page)
-                                                        summa = summa + num_page
-                                                        if num_page > 0 and num_page < 1201:
-                                                            page = int(num_page / 20) + 1
-                                                            zapchast00_1200[url_zapchast] = page
-                                                        elif num_page > 1200:
-                                                            page = int(num_page / 20) + 1
-                                                            zapchast1200[url_zapchast] = page
-                                                        elif num_page == 0:
-                                                            print(url_zapchast, "Страница с нулевым значением нам не нужна")
-                                                        else:
-                                                            #null_or_xz[url_zapchast] = page
-                                                            print("Страница записалась в отдельный список")
-
-                                                os.remove("excample.html")
-                                            except Exception:
-                                                print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
-                                    elif num_page == 0:
-                                        zapchast00_1200[url_zapchast] = page
-                                
-                        except Exception:
-                            print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
-                        
-                        url_zapchast = f"{first_part}{int(first_year)+1}-{end_year_start}{second_part}"
-                        
-                        print(url_zapchast)
-                        try:
-                        #print(url_zapchast)
-                            driver.get(url=url_zapchast)
-                            time.sleep(1)
-
-                            with open("excample.html", "w", encoding="utf-8") as file:
-                                file.write(driver.page_source)
-
-                            with open("excample.html", encoding="utf-8") as file:
-                                src = file.read()
-
-                            soup = BeautifulSoup(src, 'html.parser')
-
-                            count = soup.find_all("h5", class_="list-title js-var_iCount")
-                            #print(count)
-                            for item in count:
-                                item = str(item)
-                                if "<b>" in item:
-                                    #print(item)
-                                    num_page = item[item.find("<b>")+3: item.find("</b>")]
-                                    num_page = int(num_page.replace(" ",""))
-                                    print(num_page)
-                                    summa = summa + num_page
-                                    if num_page > 0 and num_page < 1201:
-                                        page = int(num_page / 20) + 1
-                                        zapchast00_1200[url_zapchast] = page
-                                    elif num_page > 1200:
+                    item_href_categories = str(url_zapchast)
+                    start_year_start = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
+                    end_year_start = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
+                    first_year = start_year_start + 3
+                    first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
+                    second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
                     
-                                        item_href_categories = str(url_zapchast)
-                                        start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
-                                        end_year = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
-                                        first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
-                                        second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
-                                        for year in range(start_year, (end_year+1)):
-                                            url_zapchast = f"{first_part}{year}-{year}{second_part}"
-                                            
-                                            print(url_zapchast)
-                                            try:
-                                            #print(url_zapchast)
-                                                driver.get(url=url_zapchast)
-                                                time.sleep(1)
-
-                                                with open("excample.html", "w", encoding="utf-8") as file:
-                                                    file.write(driver.page_source)
-
-                                                with open("excample.html", encoding="utf-8") as file:
-                                                    src = file.read()
-
-                                                soup = BeautifulSoup(src, 'html.parser')
-
-                                                count = soup.find_all("h5", class_="list-title js-var_iCount")
-                                                #print(count)
-                                                for item in count:
-                                                    item = str(item)
-                                                    if "<b>" in item:
-                                                        #print(item)
-                                                        num_page = item[item.find("<b>")+3: item.find("</b>")]
-                                                        num_page = int(num_page.replace(" ",""))
-                                                        print(num_page)
-                                                        summa = summa + num_page
-                                                        if num_page > 0 and num_page < 1201:
-                                                            page = int(num_page / 20) + 1
-                                                            zapchast00_1200[url_zapchast] = page
-                                                        elif num_page > 1200:
-                                                            page = int(num_page / 20) + 1
-                                                            zapchast1200[url_zapchast] = page
-                                                        elif num_page == 0:
-                                                            print(url_zapchast, "Страница с нулевым значением нам не нужна")
-
-                                                os.remove("excample.html")
-                                            except Exception:
-                                                print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
-                                
-                        except Exception:
-                            print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                    url_zapchast = f"{first_part}{start_year_start}-{first_year}{second_part}"
                     
-                    elif num_page == 0:
-                        null_or_xz[url_zapchast] = page
-                        
-            os.remove(f"{item_text_model}.html")
-        except Exception:
-            print(f"Старница {url_zapchast} отвалилась!!!!!!!!!!!!")
+                    print(url_zapchast)
+                    try:
+                    #print(url_zapchast)
+                        driver.get(url=url_zapchast)
+                        time.sleep(1)
+
+                        with open("excample.html", "w", encoding="utf-8") as file:
+                            file.write(driver.page_source)
+
+                        with open("excample.html", encoding="utf-8") as file:
+                            src = file.read()
+
+                        soup = BeautifulSoup(src, 'html.parser')
+
+                        count = soup.find_all("h5", class_="list-title js-var_iCount")
+                        #print(count)
+                        for item in count:
+                            item = str(item)
+                            if "<b>" in item:
+                                #print(item)
+                                num_page = item[item.find("<b>")+3: item.find("</b>")]
+                                num_page = int(num_page.replace(" ",""))
+                                print(num_page)
+                                summa = summa + num_page
+                                if num_page > 0 and num_page < 1201:
+                                    page = int(num_page / 20) + 1
+                                    zapchast00_1200[url_zapchast] = page
+                                elif num_page > 1200:
+                
+                                    item_href_categories = str(url_zapchast)
+                                    start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
+                                    end_year = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
+                                    first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
+                                    second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
+                                    for year in range(start_year, (end_year+1)):
+                                        url_zapchast = f"{first_part}{year}-{year}{second_part}"
+                                        
+                                        print(url_zapchast)
+                                        try:
+                                        #print(url_zapchast)
+                                            driver.get(url=url_zapchast)
+                                            time.sleep(1)
+
+                                            with open("excample.html", "w", encoding="utf-8") as file:
+                                                file.write(driver.page_source)
+
+                                            with open("excample.html", encoding="utf-8") as file:
+                                                src = file.read()
+
+                                            soup = BeautifulSoup(src, 'html.parser')
+
+                                            count = soup.find_all("h5", class_="list-title js-var_iCount")
+                                            #print(count)
+                                            for item in count:
+                                                item = str(item)
+                                                if "<b>" in item:
+                                                    #print(item)
+                                                    num_page = item[item.find("<b>")+3: item.find("</b>")]
+                                                    num_page = int(num_page.replace(" ",""))
+                                                    print(num_page)
+                                                    summa = summa + num_page
+                                                    if num_page > 0 and num_page < 1201:
+                                                        page = int(num_page / 20) + 1
+                                                        zapchast00_1200[url_zapchast] = page
+                                                    elif num_page > 1200:
+                                                        page = int(num_page / 20) + 1
+                                                        zapchast1200[url_zapchast] = page
+                                                    elif num_page == 0:
+                                                        print(url_zapchast, "Страница с нулевым значением нам не нужна")
+                                                    else:
+                                                        #null_or_xz[url_zapchast] = page
+                                                        print("Страница записалась в отдельный список")
+
+                                            os.remove("excample.html")
+                                        except Exception:
+                                            print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                                elif num_page == 0:
+                                    zapchast00_1200[url_zapchast] = page
+                            
+                    except Exception:
+                        print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                    
+                    url_zapchast = f"{first_part}{int(first_year)+1}-{end_year_start}{second_part}"
+                    
+                    print(url_zapchast)
+                    try:
+                    #print(url_zapchast)
+                        driver.get(url=url_zapchast)
+                        time.sleep(1)
+
+                        with open("excample.html", "w", encoding="utf-8") as file:
+                            file.write(driver.page_source)
+
+                        with open("excample.html", encoding="utf-8") as file:
+                            src = file.read()
+
+                        soup = BeautifulSoup(src, 'html.parser')
+
+                        count = soup.find_all("h5", class_="list-title js-var_iCount")
+                        #print(count)
+                        for item in count:
+                            item = str(item)
+                            if "<b>" in item:
+                                #print(item)
+                                num_page = item[item.find("<b>")+3: item.find("</b>")]
+                                num_page = int(num_page.replace(" ",""))
+                                print(num_page)
+                                summa = summa + num_page
+                                if num_page > 0 and num_page < 1201:
+                                    page = int(num_page / 20) + 1
+                                    zapchast00_1200[url_zapchast] = page
+                                elif num_page > 1200:
+                
+                                    item_href_categories = str(url_zapchast)
+                                    start_year = int(item_href_categories[item_href_categories.find("god_") + 4 : item_href_categories.find("/price-ot_") - 5])
+                                    end_year = int(item_href_categories[item_href_categories.find("god_") + 9 : item_href_categories.find("/price-ot_")])
+                                    first_part = item_href_categories[ : item_href_categories.find("god_")+ 4]
+                                    second_part = item_href_categories[item_href_categories.find("/price-ot_") : ]
+                                    for year in range(start_year, (end_year+1)):
+                                        url_zapchast = f"{first_part}{year}-{year}{second_part}"
+                                        
+                                        print(url_zapchast)
+                                        try:
+                                        #print(url_zapchast)
+                                            driver.get(url=url_zapchast)
+                                            time.sleep(1)
+
+                                            with open("excample.html", "w", encoding="utf-8") as file:
+                                                file.write(driver.page_source)
+
+                                            with open("excample.html", encoding="utf-8") as file:
+                                                src = file.read()
+
+                                            soup = BeautifulSoup(src, 'html.parser')
+
+                                            count = soup.find_all("h5", class_="list-title js-var_iCount")
+                                            #print(count)
+                                            for item in count:
+                                                item = str(item)
+                                                if "<b>" in item:
+                                                    #print(item)
+                                                    num_page = item[item.find("<b>")+3: item.find("</b>")]
+                                                    num_page = int(num_page.replace(" ",""))
+                                                    print(num_page)
+                                                    summa = summa + num_page
+                                                    if num_page > 0 and num_page < 1201:
+                                                        page = int(num_page / 20) + 1
+                                                        zapchast00_1200[url_zapchast] = page
+                                                    elif num_page > 1200:
+                                                        page = int(num_page / 20) + 1
+                                                        zapchast1200[url_zapchast] = page
+                                                    elif num_page == 0:
+                                                        print(url_zapchast, "Страница с нулевым значением нам не нужна")
+
+                                            os.remove("excample.html")
+                                        except Exception:
+                                            print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                            
+                    except Exception:
+                        print(f"Не загрузилась {url_zapchast} - загрузим позже, попробуй обновить вручную в браузере")
+                
+                elif num_page == 0:
+                    null_or_xz[url_zapchast] = page
+                    
+        os.remove(f"{1}.html")
+    except Exception:
+        print(f"Старница {url_zapchast} отвалилась!!!!!!!!!!!!")
 
 with open("null_or_xz.json", "a", encoding="utf-8") as file:
     json.dump(null_or_xz, file, indent=4, ensure_ascii=False)
